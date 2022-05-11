@@ -12,10 +12,12 @@ if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)
 
 token = os.environ['BOT_TOKEN']
-updater = Updater(token=token)
-dispatcher = updater.dispatcher
 
-dispatcher.add_handler(start_handler)
-dispatcher.add_handler(create_event_handler)
+if __name__ == '__main__':
+    updater = Updater(token=token)
+    dispatcher = updater.dispatcher
 
-updater.start_polling()
+    dispatcher.add_handler(start_handler)
+    dispatcher.add_handler(create_event_handler)
+
+    updater.start_polling()
