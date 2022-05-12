@@ -1,10 +1,13 @@
 import os
-from sqlalchemy import select
 from dotenv import load_dotenv
+
+from sqlalchemy import select
+from db.models import Session, engine
+
 from telegram import Update
 from telegram.ext import Updater
-from db.models import Session, engine
-from handlers import start_handler, create_event_handler, initiate_handler
+
+from handlers import start, reserve, initiate
 
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
@@ -17,8 +20,8 @@ if __name__ == '__main__':
     updater = Updater(token=token)
     dispatcher = updater.dispatcher
 
-    dispatcher.add_handler(start_handler)
-    dispatcher.add_handler(create_event_handler)
-    dispatcher.add_handler(initiate_handler)
+    dispatcher.add_handler(start.start_handler)
+    dispatcher.add_handler(reserve.reserve_handler)
+    dispatcher.add_handler(initiate.initiate_handler)
 
     updater.start_polling()
