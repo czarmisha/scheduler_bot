@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import Updater
 from db.models import Session, engine
-from handlers import start_handler, create_event_handler
+from handlers import start_handler, create_event_handler, initiate_handler
 
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
@@ -19,5 +19,6 @@ if __name__ == '__main__':
 
     dispatcher.add_handler(start_handler)
     dispatcher.add_handler(create_event_handler)
+    dispatcher.add_handler(initiate_handler)
 
     updater.start_polling()
