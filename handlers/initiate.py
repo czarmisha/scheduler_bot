@@ -1,6 +1,6 @@
 import datetime
 
-from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
+from telegram import Update
 from telegram.ext import CallbackContext, ChatMemberHandler
 
 from sqlalchemy import select
