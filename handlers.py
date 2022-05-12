@@ -23,26 +23,26 @@ def create_event(update: Update, context: CallbackContext):
     create events (/create_event 28.05.2022 15:00 16:00)
     receive date, start_time and end_time from context.args list
     """
-    if not context.args or len(context.args) < 3:
-        context.bot.send_message(chat_id=update.effective_chat.id, text="неверный формат создания события")
-    else:    
-        chat_id = update.message.chat.id
-        datetime_start_str = f'{context.args[0]} {context.args[1]}'
-        datetime_end_str = f'{context.args[0]} {context.args[2]}'
-        # description = context.args[3] if context.args[3] else ''
-        #TODO: need validate date and time
-        #TODO: need validate permissions
-        datetime_start = datetime.datetime.strptime(datetime_start_str, '%d.%m.%y %H:%M')
-        datetime_end = datetime.datetime.strptime(datetime_end_str, '%d.%m.%y %H:%M')
-        statement = select(Group).filter_by(tg_id=chat_id)
-        group = local_session.execute(statement).scalars().first()
-        statement = select(Calendar).filter_by(group_id=group.id)
-        calendar = local_session.execute(statement).scalars().first()
-        if calendar:
-            Event(start=datetime_start, end=datetime_end, description='description', is_repeated=False, calendar_id=calendar.id)
-            context.bot.send_message(chat_id=update.effective_chat.id, text=f'Событие создано')
-        else:
-            context.bot.send_message(chat_id=update.effective_chat.id, text=f'Событие не создано')
+    # if not context.args or len(context.args) < 3:
+    #     context.bot.send_message(chat_id=update.effective_chat.id, text="неверный формат создания события")
+    # else:    
+    #     chat_id = update.message.chat.id
+    #     datetime_start_str = f'{context.args[0]} {context.args[1]}'
+    #     datetime_end_str = f'{context.args[0]} {context.args[2]}'
+    #     # description = context.args[3] if context.args[3] else ''
+    #     #TODO: need validate date and time
+    #     #TODO: need validate permissions
+    #     datetime_start = datetime.datetime.strptime(datetime_start_str, '%d.%m.%y %H:%M')
+    #     datetime_end = datetime.datetime.strptime(datetime_end_str, '%d.%m.%y %H:%M')
+    #     statement = select(Group).filter_by(tg_id=chat_id)
+    #     group = local_session.execute(statement).scalars().first()
+    #     statement = select(Calendar).filter_by(group_id=group.id)
+    #     calendar = local_session.execute(statement).scalars().first()
+    #     if calendar:
+    #         Event(start=datetime_start, end=datetime_end, description='description', is_repeated=False, calendar_id=calendar.id)
+    #         context.bot.send_message(chat_id=update.effective_chat.id, text=f'Событие создано')
+    #     else:
+    #         context.bot.send_message(chat_id=update.effective_chat.id, text=f'Событие не создано')
 
 create_event_handler = CommandHandler('create_event', create_event)
 
