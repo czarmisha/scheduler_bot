@@ -20,6 +20,8 @@ from telegram.ext import (
 from sqlalchemy import select
 from db.models import Group, Calendar, Event, Session, engine
 
+from handlers.keyboards import get_data_keyboard, get_time_keyboard
+
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
 )
@@ -36,30 +38,8 @@ def reserve(update: Update, context: CallbackContext):
     month = datetime.datetime.today().month
     year = datetime.datetime.today().year
 
-    buttons = [
-        [
-            InlineKeyboardButton('День', callback_data=-1),
-            InlineKeyboardButton('➖', callback_data='dec_day'),
-            InlineKeyboardButton(f'{day}', callback_data=2),
-            InlineKeyboardButton('➕', callback_data='inc_day'),
-        ],
-        [
-            InlineKeyboardButton('Месяц', callback_data=-2),
-            InlineKeyboardButton('➖', callback_data='dec_month'),
-            InlineKeyboardButton(f'{month}', callback_data=2),
-            InlineKeyboardButton('➕', callback_data='inc_month'),
-        ],
-        [
-            InlineKeyboardButton('Год', callback_data=-3),
-            InlineKeyboardButton('➖', callback_data='dec_year'),
-            InlineKeyboardButton(f'{year}', callback_data=2),
-            InlineKeyboardButton('➕', callback_data='inc_year'),
-        ],
-        [InlineKeyboardButton('✔️ Подтвердить', callback_data='done')],
-        [InlineKeyboardButton('✖️ Отменить', callback_data='cancel')],
-    ]
     update.message.reply_text('Введите дату брони',
-        reply_markup=InlineKeyboardMarkup(buttons)
+        reply_markup=InlineKeyboardMarkup(get_data_keyboard(day, month, year))
         # reply_markup=ReplyKeyboardRemove()
     )
     return DATA
@@ -77,31 +57,9 @@ def increase_data(update: Update, context: CallbackContext):
     elif query.data == 'inc_year':
         year += 1
 
-    buttons = [
-        [
-            InlineKeyboardButton('День', callback_data=-1),
-            InlineKeyboardButton('➖', callback_data='dec_day'),
-            InlineKeyboardButton(f'{day}', callback_data=2),
-            InlineKeyboardButton('➕', callback_data='inc_day'),
-        ],
-        [
-            InlineKeyboardButton('Месяц', callback_data=-2),
-            InlineKeyboardButton('➖', callback_data='dec_month'),
-            InlineKeyboardButton(f'{month}', callback_data=2),
-            InlineKeyboardButton('➕', callback_data='inc_month'),
-        ],
-        [
-            InlineKeyboardButton('Год', callback_data=-3),
-            InlineKeyboardButton('➖', callback_data='dec_year'),
-            InlineKeyboardButton(f'{year}', callback_data=2),
-            InlineKeyboardButton('➕', callback_data='inc_year'),
-        ],
-        [InlineKeyboardButton('✔️ Подтвердить', callback_data='done')],
-        [InlineKeyboardButton('✖️ Отменить', callback_data='cancel')],
-    ]
     query.edit_message_text(
         text='Введите дату брони',
-        reply_markup=InlineKeyboardMarkup(buttons)
+        reply_markup=InlineKeyboardMarkup(get_data_keyboard(day, month, year))
     )
 
 def decrease_data(update: Update, context: CallbackContext):
@@ -117,31 +75,9 @@ def decrease_data(update: Update, context: CallbackContext):
     elif query.data == 'dec_year':
         year -= 1
 
-    buttons = [
-        [
-            InlineKeyboardButton('День', callback_data=-1),
-            InlineKeyboardButton('➖', callback_data='dec_day'),
-            InlineKeyboardButton(f'{day}', callback_data=2),
-            InlineKeyboardButton('➕', callback_data='inc_day'),
-        ],
-        [
-            InlineKeyboardButton('Месяц', callback_data=-2),
-            InlineKeyboardButton('➖', callback_data='dec_month'),
-            InlineKeyboardButton(f'{month}', callback_data=2),
-            InlineKeyboardButton('➕', callback_data='inc_month'),
-        ],
-        [
-            InlineKeyboardButton('Год', callback_data=-3),
-            InlineKeyboardButton('➖', callback_data='dec_year'),
-            InlineKeyboardButton(f'{year}', callback_data=2),
-            InlineKeyboardButton('➕', callback_data='inc_year'),
-        ],
-        [InlineKeyboardButton('✔️ Подтвердить', callback_data='done')],
-        [InlineKeyboardButton('✖️ Отменить', callback_data='cancel')],
-    ]
     query.edit_message_text(
         text='Введите дату брони',
-        reply_markup=InlineKeyboardMarkup(buttons)
+        reply_markup=InlineKeyboardMarkup(get_data_keyboard(day, month, year))
     )
 
 def data(update: Update, context: CallbackContext):
@@ -149,29 +85,13 @@ def data(update: Update, context: CallbackContext):
     logger.info(query.data)
     query.answer()
 
-    global hour, minutes
+    global hour, minute
     hour = datetime.datetime.now().hour
-    minutes = datetime.datetime.now().minute
+    minute = datetime.datetime.now().minute
     
-    buttons = [
-        [
-            InlineKeyboardButton('Часы', callback_data=-1),
-            InlineKeyboardButton('➖', callback_data='dec_hour'),
-            InlineKeyboardButton(f'{hour}', callback_data=2),
-            InlineKeyboardButton('➕', callback_data='inc_hour'),
-        ],
-        [
-            InlineKeyboardButton('Минуты', callback_data=-2),
-            InlineKeyboardButton('➖', callback_data='dec_minutes'),
-            InlineKeyboardButton(f'{minutes}', callback_data=2),
-            InlineKeyboardButton('➕', callback_data='inc_minutes'),
-        ],
-        [InlineKeyboardButton('✔️ Подтвердить', callback_data='done')],
-        [InlineKeyboardButton('✖️ Отменить', callback_data='cancel')],
-    ]
     query.edit_message_text(
         text='Введите время начала брони',
-        reply_markup=InlineKeyboardMarkup(buttons)
+        reply_markup=InlineKeyboardMarkup(get_time_keyboard(hour, minute, 'start'))
     )
 
     return START
@@ -181,63 +101,41 @@ def increase_time(update: Update, context: CallbackContext):
     logger.info(query.data)
     query.answer()
 
-    global hour, minutes
-    if query.data == 'inc_hour':
+    global hour, minute
+    if query.data.startswith('inc_hour'):
         hour += 1
-    elif query.data == 'inc_minutes':
-        minutes += 1
+    elif query.data.startswith('inc_minute'):
+        minute += 1
 
-    buttons = [
-        [
-            InlineKeyboardButton('Часы', callback_data=-1),
-            InlineKeyboardButton('➖', callback_data='dec_hour'),
-            InlineKeyboardButton(f'{hour}', callback_data=2),
-            InlineKeyboardButton('➕', callback_data='inc_hour'),
-        ],
-        [
-            InlineKeyboardButton('Минуты', callback_data=-2),
-            InlineKeyboardButton('➖', callback_data='dec_minutes'),
-            InlineKeyboardButton(f'{minutes}', callback_data=2),
-            InlineKeyboardButton('➕', callback_data='inc_minutes'),
-        ],
-        [InlineKeyboardButton('✔️ Подтвердить', callback_data='done')],
-        [InlineKeyboardButton('✖️ Отменить', callback_data='cancel')],
-    ]
+
+    state = 'начала' if query.data.endswith('start') else 'окончания'
     query.edit_message_text(
-        text='Введите время начала брони',
-        reply_markup=InlineKeyboardMarkup(buttons)
+        text=f'Введите время {state} брони',
+        reply_markup=InlineKeyboardMarkup(get_time_keyboard(
+                hour, minute, 'start' if query.data.endswith('start') else 'end'
+            )
+        )
     )
+
 
 def decrease_time(update: Update, context: CallbackContext):
     query = update.callback_query
     logger.info(query.data)
     query.answer()
 
-    global hour, minutes
-    if query.data == 'dec_hour':
+    global hour, minute
+    if query.data.startswith('dec_hour'):
         hour -= 1
-    elif query.data == 'dec_minutes':
-        minutes -= 1
-
-    buttons = [
-        [
-            InlineKeyboardButton('Часы', callback_data=-1),
-            InlineKeyboardButton('➖', callback_data='dec_hour'),
-            InlineKeyboardButton(f'{hour}', callback_data=2),
-            InlineKeyboardButton('➕', callback_data='inc_hour'),
-        ],
-        [
-            InlineKeyboardButton('Минуты', callback_data=-2),
-            InlineKeyboardButton('➖', callback_data='dec_hour'),
-            InlineKeyboardButton(f'{minutes}', callback_data=2),
-            InlineKeyboardButton('➕', callback_data='inc_hour'),
-        ],
-        [InlineKeyboardButton('✔️ Подтвердить', callback_data='done')],
-        [InlineKeyboardButton('✖️ Отменить', callback_data='cancel')],
-    ]
+    elif query.data.startswith('dec_minute'):
+        minute -= 1
+    
+    state = 'начала' if query.data.endswith('start') else 'окончания'
     query.edit_message_text(
-        text='Введите время начала брони',
-        reply_markup=InlineKeyboardMarkup(buttons)
+        text=f'Введите время {state} брони',
+        reply_markup=InlineKeyboardMarkup(get_time_keyboard(
+                hour, minute, 'start' if query.data.endswith('start') else 'end'
+            )
+        )
     )
 
 def start(update: Update, context: CallbackContext):
@@ -250,34 +148,17 @@ def start(update: Update, context: CallbackContext):
     hour = datetime.datetime.now().hour + 1
     minutes = datetime.datetime.now().minute
     
-    buttons = [
-        [
-            InlineKeyboardButton('Часы', callback_data=-1),
-            InlineKeyboardButton('➖', callback_data='dec_hour'),
-            InlineKeyboardButton(f'{hour}', callback_data=2),
-            InlineKeyboardButton('➕', callback_data='inc_hour'),
-        ],
-        [
-            InlineKeyboardButton('Минуты', callback_data=-2),
-            InlineKeyboardButton('➖', callback_data='dec_hour'),
-            InlineKeyboardButton(f'{minutes}', callback_data=2),
-            InlineKeyboardButton('➕', callback_data='inc_hour'),
-        ],
-        [InlineKeyboardButton('✔️ Подтвердить', callback_data='done')],
-        [InlineKeyboardButton('✖️ Отменить', callback_data='cancel')],
-    ]
     query.edit_message_text(
         text='Введите время окончания брони',
-        reply_markup=InlineKeyboardMarkup(buttons)
+        reply_markup=InlineKeyboardMarkup(get_time_keyboard(hour, minute, 'end'))
     )
 
     return END
 
 def end(update: Update, context: CallbackContext):
-    logger.info(update.message.text)
-    update.message.reply_text(
-        'Введите описание'
-    )
+    global chat_id
+    context.bot.send_message(chat_id=chat_id, text='Введите описание')
+
     return DESCRIPTION
 
 def description(update: Update, context: CallbackContext):
@@ -312,13 +193,13 @@ reserve_handler = ConversationHandler(
             START: [
                 CallbackQueryHandler(increase_time, pattern='^inc_'),
                 CallbackQueryHandler(decrease_time, pattern='^dec_'),
-                CallbackQueryHandler(data, pattern='^done$'),
+                CallbackQueryHandler(start, pattern='^done$'),
                 CallbackQueryHandler(cancel, pattern='^cancel$'),
             ],
             END: [
                 CallbackQueryHandler(increase_time, pattern='^inc_'),
                 CallbackQueryHandler(decrease_time, pattern='^dec_'),
-                CallbackQueryHandler(data, pattern='^done$'),
+                CallbackQueryHandler(end, pattern='^done$'),
                 CallbackQueryHandler(cancel, pattern='^cancel$'),
             ],
             DESCRIPTION: [MessageHandler(Filters.text & ~Filters.command, description)],
