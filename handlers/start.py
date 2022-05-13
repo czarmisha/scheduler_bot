@@ -8,6 +8,8 @@ from db.models import Group, Session, engine
 
 local_session = Session(bind=engine)
 
+RESERVE, DISPLAY = range(2)
+
 def start(update: Update, context: CallbackContext):
     statement = select(Group)
     group = local_session.execute(statement).scalars().first()
@@ -17,12 +19,13 @@ def start(update: Update, context: CallbackContext):
     else:
         reply_keyboard = [['/reserve', '/display']]
         markup_key = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+
         update.message.reply_text(
             'Меня зовут планировщик концференц. зала Uzinfocom. '
-            'Вот, что я умею:\n'
+            'Вот, что я умею:\n\n'
             'Команда /reserve, чтобы забронировать зал.\n'
             'Команда /display, чтобы отобразить список брони.\n\n'
-            'за помощью - @m_dergachyov',
-            reply_markup=markup_key,)
+            'по вопросам сотрудничества и рекламы - @m_dergachyov',
+            reply_markup=markup_key)
 
 start_handler = CommandHandler('start', start)
