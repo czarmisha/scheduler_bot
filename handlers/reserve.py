@@ -2,10 +2,7 @@ import logging
 import datetime
 
 from telegram import (
-    CallbackQuery,
     Update,
-    ReplyKeyboardRemove,
-    InlineKeyboardButton,
     InlineKeyboardMarkup
 )
 from telegram.ext import (
@@ -40,7 +37,6 @@ def reserve(update: Update, context: CallbackContext):
 
     update.message.reply_text('Введите дату брони',
         reply_markup=InlineKeyboardMarkup(get_data_keyboard(day, month, year))
-        # reply_markup=ReplyKeyboardRemove()
     )
     return DATA
 
@@ -171,10 +167,6 @@ def cancel(update: Update, context: CallbackContext):
     update.callback_query.answer()
     global chat_id
     context.bot.send_message(chat_id=chat_id, text='Мое дело предложить - Ваше отказаться')
-    # update.message.reply_text(
-    #     'Мое дело предложить - Ваше отказаться', 
-    #     reply_markup=ReplyKeyboardRemove()
-    # )
     return ConversationHandler.END
 
 reserve_handler = ConversationHandler(
@@ -185,10 +177,6 @@ reserve_handler = ConversationHandler(
                 CallbackQueryHandler(decrease_data, pattern='^dec_'),
                 CallbackQueryHandler(data, pattern='^done$'),
                 CallbackQueryHandler(cancel, pattern='^cancel$'),
-                # MessageHandler(Filters.text & ~Filters.command, data)
-                # CallbackQueryHandler(increase, pattern='\b([1-9]|[12][0-9]|3[01])\b'),
-                # CallbackQueryHandler(decrease, pattern='\b([1-9]|1[0-2])\b'),
-                # CallbackQueryHandler(data, pattern='\b202[23]\b'),
             ],
             START: [
                 CallbackQueryHandler(increase_time, pattern='^inc_'),

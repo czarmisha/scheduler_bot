@@ -1,5 +1,3 @@
-import datetime
-
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import CallbackContext, CommandHandler
 

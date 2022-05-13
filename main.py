@@ -1,10 +1,6 @@
 import os
 from dotenv import load_dotenv
 
-from sqlalchemy import select
-from db.models import Session, engine
-
-from telegram import Update
 from telegram.ext import Updater
 
 from handlers import start, reserve, initiate
