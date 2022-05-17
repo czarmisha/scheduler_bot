@@ -228,6 +228,12 @@ def description(update: Update, context: CallbackContext):
     local_session.add(event)
     local_session.commit()
     update.message.reply_text('Событие создано')
+    context.bot.send_message(chat_id=group.tg_id,
+        text='Только что было создано новое событие \n\n'
+            f'Дата начала: {event_start}\n'
+            f'Дата окончания: {event_end}\n'
+            f'Описание: {update.message.text}'
+    )
     return ConversationHandler.END
 
 def cancel(update: Update, context: CallbackContext):
