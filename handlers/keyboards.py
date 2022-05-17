@@ -1,6 +1,6 @@
 from telegram import InlineKeyboardButton
 
-def get_data_keyboard(day, month, year):
+def get_date_keyboard(day, month, year):
     return [
             [
                 InlineKeyboardButton('День', callback_data=-1),
@@ -20,7 +20,7 @@ def get_data_keyboard(day, month, year):
                 InlineKeyboardButton(f'{year}', callback_data=2),
                 InlineKeyboardButton('➕', callback_data='inc_year'),
             ],
-            [InlineKeyboardButton('✔️ Подтвердить', callback_data='done')],
+            [InlineKeyboardButton('✔️ Подтвердить', callback_data=f'{day}.{month}.{year}')],
             [InlineKeyboardButton('✖️ Отменить', callback_data='cancel')],
         ]
 
@@ -38,6 +38,6 @@ def get_time_keyboard(hour, minute, state):
                 InlineKeyboardButton(f'{minute}', callback_data=2),
                 InlineKeyboardButton('➕', callback_data=f'inc_minute{state}'),
             ],
-            [InlineKeyboardButton('✔️ Подтвердить', callback_data='done')],
+            [InlineKeyboardButton('✔️ Подтвердить', callback_data=f'{hour}:{minute}')],
             [InlineKeyboardButton('✖️ Отменить', callback_data='cancel')],
         ]

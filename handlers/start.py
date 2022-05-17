@@ -12,6 +12,7 @@ def start(update: Update, context: CallbackContext):
     statement = select(Group)
     group = local_session.execute(statement).scalars().first()
     author = context.bot.get_chat_member(group.tg_id, update.effective_user.id)
+    # проверка группы еще по названию нужна
     if author.status == 'left' or author.status == 'kicked' or not author.status:
         context.bot.send_message(chat_id=update.effective_chat.id, text="У Вас нет прав общаться со мной")
     else:
