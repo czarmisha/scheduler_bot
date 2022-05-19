@@ -1,8 +1,5 @@
-from calendar import calendar
-from email import message
 import logging
 import datetime
-from operator import and_, or_
 
 from telegram import (
     Update,
@@ -17,11 +14,12 @@ from telegram.ext import (
     CallbackQueryHandler,
 )
 
-from sqlalchemy import select, and_, or_
+from sqlalchemy import select
 from sqlalchemy.exc import MultipleResultsFound
-from db.models import Group, Calendar, Event, Session, engine
+from db.models import Group, Calendar, Session, engine
 
 from handlers.keyboards import get_date_keyboard, get_time_keyboard
+from validators.reserveValidator import ReserveValidator
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
@@ -192,15 +190,16 @@ def start(update: Update, context: CallbackContext):
     query.answer()
 
     #TODO validate date: can not be in past
-    global hour, minutes, event_start
+    global hour, minute, event_start
     event_start = query.data
-    hour = datetime.datetime.now().hour + 1
-    minutes = datetime.datetime.now().minute
+    hour += 1
 
+    str_min = f'0{minute}' if minute < 10 else minute
+    str_h = f'0{hour}' if hour < 10 else hour
     query.edit_message_text(
         text='Введите время окончания брони',
         reply_markup=InlineKeyboardMarkup(
-            get_time_keyboard(hour, minute, 'end'))
+            get_time_keyboard(str_h, str_min, 'end'))
     )
 
     return END
@@ -218,45 +217,16 @@ def end(update: Update, context: CallbackContext):
 
 
 def description(update: Update, context: CallbackContext):
-    # есть ли бронь на это время  end < start1 ok, start1<end<end1 err, start1<start<end1 err, start>end1 ok
-
-    # do we have a group and calendar in our db *********
-    statement = select(Group)
-    try:
-        group = local_session.execute(statement).scalars().one_or_none()
-    except MultipleResultsFound:
-        logger.error('больше 1й группы в бд')
-        update.message.reply_text(
-            'Ошибка! больше 1й группы в бд. обратитесь к админу')
-        return ConversationHandler.END
-    if not group:
-        logger.error('нет бд при создании события')
-        update.message.reply_text('Ошибка! Нет группы в базе данных')
-        return ConversationHandler.END
-
-    statement = select(Calendar).where(Calendar.group_id == group.id)
-    try:
-        calendar = local_session.execute(statement).scalars().one_or_none()
-    except MultipleResultsFound:
-        logger.error('больше 1го календаря в бд')
-        update.message.reply_text(
-            'Ошибка! больше 1го календаря в бд. обратитесь к админу')
-        return ConversationHandler.END
-    if not calendar:
-        logger.error('Нет календаря при создании события')
-        update.message.reply_text('Ошибка! Нет календаря в базе данных')
-        return ConversationHandler.END
-
-    # 5 minutes < time of event < 8 hours ***********************************
     global event_date, event_start, event_end
-    event_start = event_date + ' ' + event_start
-    event_start = datetime.datetime.strptime(event_start, '%d.%m.%Y %H:%M')
-    event_end = event_date + ' ' + event_end
-    event_end = datetime.datetime.strptime(event_end, '%d.%m.%Y %H:%M')
-    diff = event_end - event_start
-    if diff.total_seconds() < 300:
-        logger.error('Событие не может длиться меньше 5минут')
-        update.message.reply_text('Событие не может длиться меньше 5минут')
+    
+    event_start = datetime.datetime.strptime(event_date + ' ' + event_start, '%d.%m.%Y %H:%M')
+    event_end = datetime.datetime.strptime(event_date + ' ' + event_end, '%d.%m.%Y %H:%M')
+
+    validator = ReserveValidator(event_start, event_end, update.message.text)
+    success, mess = validator.duration_validation()
+    if not success:
+        logger.error(mess)
+        update.message.reply_text(mess)
         hour = datetime.datetime.now().hour
         minute = datetime.datetime.now().minute
 
@@ -268,47 +238,25 @@ def description(update: Update, context: CallbackContext):
                 get_time_keyboard(str_h, str_min, 'start'))
         )
         return START
-
-    elif diff.total_seconds() > 28800:
-        logger.error('Событие не может длиться больше 8 часов')
-        update.message.reply_text('Событие не может длиться больше 8 часов')
-        hour = datetime.datetime.now().hour
-        minute = datetime.datetime.now().minute
-
-        str_min = f'0{minute}' if minute < 10 else minute
-        str_h = f'0{hour}' if hour < 10 else hour
-        update.message.reply_text(
-            text='Введите время начала брони',
-            reply_markup=InlineKeyboardMarkup(
-                get_time_keyboard(str_h, str_min, 'start'))
-        )
-        return START
-
-    # search for collision *****************
-    statement = select(Event).filter(or_(and_(Event.start < event_start, Event.end > event_start), and_(
-        Event.start < event_end, Event.end > event_end)))
-    events = local_session.execute(statement).all()
-    if events:
-        logger.error('Событие на это время уже запланировано. \n\n /reserve \n /display')
-        update.message.reply_text('Событие на это время уже запланировано. \n\n /reserve \n /display')
+    
+    collision = validator.collision_validation()
+    if not collision[0]:
+        logger.error(collision[1])
+        update.message.reply_text(collision[1])
         return ConversationHandler.END
 
-    # create event if all is ok *******************
-    event = Event(
-        start=event_start,
-        end=event_end,
-        description=update.message.text,
-        calendar_id=calendar.id,
-        is_repeated=False
-    )
-    local_session.add(event)
-    local_session.commit()
+    event = validator.create_event()
+    if not event[0]:
+        logger.error(event[1])
+        update.message.reply_text(event[1])
+        return ConversationHandler.END
+
     update.message.reply_text('Событие создано')
-    context.bot.send_message(chat_id=group.tg_id,
+    context.bot.send_message(chat_id=validator.group.tg_id,
                              text='Только что было создано новое событие \n\n'
-                             f'Дата начала: {event_start}\n'
-                             f'Дата окончания: {event_end}\n'
-                             f'Описание: {update.message.text}'
+                             f'Дата начала: {validator.start}\n'
+                             f'Дата окончания: {validator.end}\n'
+                             f'Описание: {validator.description}'
                              )
     return ConversationHandler.END
 
