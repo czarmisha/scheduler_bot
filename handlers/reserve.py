@@ -114,7 +114,7 @@ def date(update: Update, context: CallbackContext):
     query.edit_message_text(
         text='Введите время начала брони',
         reply_markup=InlineKeyboardMarkup(
-            get_time_keyboard(str_h, str_min, 'start'))
+            get_time_keyboard(str_h, str_min, '🕒start'))
     )
 
     return START
@@ -149,7 +149,7 @@ def increase_time(update: Update, context: CallbackContext):
     query.edit_message_text(
         text=f'Введите время {state} брони',
         reply_markup=InlineKeyboardMarkup(get_time_keyboard(
-            str_h, str_min, 'start' if query.data.endswith('start') else 'end'
+            str_h, str_min, 'start' if query.data.endswith('🕒start') else '⏰end'
         )
         )
     )
@@ -179,7 +179,7 @@ def decrease_time(update: Update, context: CallbackContext):
     query.edit_message_text(
         text=f'Введите время {state} брони',
         reply_markup=InlineKeyboardMarkup(get_time_keyboard(
-            str_h, str_min, 'start' if query.data.endswith('start') else 'end'
+            str_h, str_min, 'start' if query.data.endswith('🕒start') else '⏰end'
         )
         )
     )
@@ -199,7 +199,7 @@ def start(update: Update, context: CallbackContext):
     query.edit_message_text(
         text='Введите время окончания брони',
         reply_markup=InlineKeyboardMarkup(
-            get_time_keyboard(str_h, str_min, 'end'))
+            get_time_keyboard(str_h, str_min, '⏰end'))
     )
 
     return END
@@ -235,7 +235,7 @@ def description(update: Update, context: CallbackContext):
         update.message.reply_text(
             text='Введите время начала брони',
             reply_markup=InlineKeyboardMarkup(
-                get_time_keyboard(str_h, str_min, 'start'))
+                get_time_keyboard(str_h, str_min, '🕒start'))
         )
         return START
     
