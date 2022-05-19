@@ -77,6 +77,6 @@ class Event(Base):
     # user = relationship("User", back_populates="event")
 
     def __repr__(self):
-        return f'<Event - start: {self.start}, end: {self.end}, user id: {self.user_id}>'
+        return f'<Event - start: {self.start}, end: {self.end}>'
 
     

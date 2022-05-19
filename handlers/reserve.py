@@ -2,6 +2,7 @@ from calendar import calendar
 from email import message
 import logging
 import datetime
+from operator import and_, or_
 
 from telegram import (
     Update,
@@ -16,7 +17,7 @@ from telegram.ext import (
     CallbackQueryHandler,
 )
 
-from sqlalchemy import select
+from sqlalchemy import select, and_, or_
 from sqlalchemy.exc import MultipleResultsFound
 from db.models import Group, Calendar, Event, Session, engine
 
@@ -190,6 +191,7 @@ def start(update: Update, context: CallbackContext):
     query = update.callback_query
     query.answer()
 
+    #TODO validate date: can not be in past
     global hour, minutes, event_start
     event_start = query.data
     hour = datetime.datetime.now().hour + 1
@@ -216,9 +218,9 @@ def end(update: Update, context: CallbackContext):
 
 
 def description(update: Update, context: CallbackContext):
-    # TODO validate date
     # есть ли бронь на это время  end < start1 ok, start1<end<end1 err, start1<start<end1 err, start>end1 ok
 
+    # do we have a group and calendar in our db *********
     statement = select(Group)
     try:
         group = local_session.execute(statement).scalars().one_or_none()
@@ -245,6 +247,7 @@ def description(update: Update, context: CallbackContext):
         update.message.reply_text('Ошибка! Нет календаря в базе данных')
         return ConversationHandler.END
 
+    # 5 minutes < time of event < 8 hours ***********************************
     global event_date, event_start, event_end
     event_start = event_date + ' ' + event_start
     event_start = datetime.datetime.strptime(event_start, '%d.%m.%Y %H:%M')
@@ -264,8 +267,8 @@ def description(update: Update, context: CallbackContext):
             reply_markup=InlineKeyboardMarkup(
                 get_time_keyboard(str_h, str_min, 'start'))
         )
-
         return START
+
     elif diff.total_seconds() > 28800:
         logger.error('Событие не может длиться больше 8 часов')
         update.message.reply_text('Событие не может длиться больше 8 часов')
@@ -279,9 +282,18 @@ def description(update: Update, context: CallbackContext):
             reply_markup=InlineKeyboardMarkup(
                 get_time_keyboard(str_h, str_min, 'start'))
         )
-
         return START
 
+    # search for collision *****************
+    statement = select(Event).filter(or_(and_(Event.start < event_start, Event.end > event_start), and_(
+        Event.start < event_end, Event.end > event_end)))
+    events = local_session.execute(statement).all()
+    if events:
+        logger.error('Событие на это время уже запланировано. \n\n /reserve \n /display')
+        update.message.reply_text('Событие на это время уже запланировано. \n\n /reserve \n /display')
+        return ConversationHandler.END
+
+    # create event if all is ok *******************
     event = Event(
         start=event_start,
         end=event_end,
