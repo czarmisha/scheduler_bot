@@ -12,7 +12,7 @@ def initiate_group(update: Update, context: CallbackContext):
     """
     handle that bot has been invited to the telegram group
     """
-    chat_id = update.effective_chat.id # update.my_chat_member.chat.id
+    chat_id = update.effective_chat.id # update.my_chat_member.chat.id #проверять кто добавлен
     statement = select(Group)
     result = local_session.execute(statement).all()
     if not result:

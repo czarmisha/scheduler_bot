@@ -14,10 +14,6 @@ from telegram.ext import (
     CallbackQueryHandler,
 )
 
-from sqlalchemy import select
-from sqlalchemy.exc import MultipleResultsFound
-from db.models import Group, Calendar, Session, engine
-
 from handlers.keyboards import get_date_keyboard, get_time_keyboard
 from validators.reserveValidator import ReserveValidator
 
@@ -26,14 +22,13 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-local_session = Session(bind=engine)
-
 DATE, START, END, DESCRIPTION = range(4)
 
 
 def reserve(update: Update, context: CallbackContext):
-    logger.info(update.message.text)
-
+    if not update.message.chat.type == 'private':
+        update.message.reply_text('Давайте лучше пообщаемся в личке')
+        return ConversationHandler.END
     global day, month, year, chat_id
     chat_id = update.effective_chat.id
     day = datetime.datetime.today().day
@@ -121,6 +116,7 @@ def date(update: Update, context: CallbackContext):
 
 
 def increase_time(update: Update, context: CallbackContext):
+    # может время по 15мин сделать а не по 5
     query = update.callback_query
     logger.info(query.data)
     query.answer()
@@ -245,7 +241,7 @@ def description(update: Update, context: CallbackContext):
         update.message.reply_text(collision[1])
         return ConversationHandler.END
 
-    event = validator.create_event()
+    event = validator.create_event(update.effective_user.id)
     if not event[0]:
         logger.error(event[1])
         update.message.reply_text(event[1])

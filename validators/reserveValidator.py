@@ -54,16 +54,17 @@ class ReserveValidator:
             return False, err_message
         return True, self.calendar
 
-    def create_event(self):
+    def create_event(self, user_id):
         calendar = self.get_calendar()
         if not calendar[0]:
             return calendar
+        #try except
         self.event = Event(
             start=self.start,
             end=self.end,
             description=self.description,
             calendar_id=self.calendar.id,
-            is_repeated=False
+            user_tg_id=user_id,
         )
         self.session.add(self.event)
         self.session.commit()

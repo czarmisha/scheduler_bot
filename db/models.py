@@ -70,9 +70,10 @@ class Event(Base):
     start = Column(DateTime, nullable=False)
     end = Column(DateTime, nullable=False)
     description = Column(String(255), nullable=False)
-    is_repeated = Column(Boolean, nullable=False)
+    # is_repeated = Column(Boolean, nullable=False)
     calendar_id = Column(Integer, ForeignKey("calendar.id"))
     # user_id = Column(Integer, ForeignKey("user.id"))
+    user_tg_id = Column(Integer, nullable=False)
     calendar = relationship("Calendar", back_populates="event")
     # user = relationship("User", back_populates="event")
 

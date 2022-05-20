@@ -16,7 +16,7 @@ def start(update: Update, context: CallbackContext):
     if author.status == 'left' or author.status == 'kicked' or not author.status:
         context.bot.send_message(chat_id=update.effective_chat.id, text="У Вас нет прав общаться со мной")
     else:
-        reply_keyboard = [['/reserve', '/display']]
+        reply_keyboard = [['/reserve', '/display', '/my_events']]
         markup_key = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
 
         update.message.reply_text(
