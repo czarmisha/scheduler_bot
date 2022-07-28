@@ -23,6 +23,7 @@ def start(update: Update, context: CallbackContext):
             'Меня зовут планировщик концференц. зала Uzinfocom. '
             'Вот, что я умею:\n\n'
             'Команда /reserve, чтобы забронировать зал.\n'
+            'Команда /my_events, чтобы отобразить ваш список мероприятий\n'
             'Команда /display, чтобы отобразить список брони.\n\n'
             'по вопросам сотрудничества и рекламы - @m_dergachyov',
             reply_markup=markup_key)

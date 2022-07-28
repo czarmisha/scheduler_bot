@@ -15,7 +15,7 @@ from telegram.ext import (
 )
 
 from handlers.keyboards import get_date_keyboard, get_time_keyboard
-from validators.reserveValidator import ReserveValidator
+from validators.eventValidator import EventValidator
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
@@ -27,7 +27,7 @@ DATE, START, END, DESCRIPTION = range(4)
 
 def reserve(update: Update, context: CallbackContext):
     if not update.message.chat.type == 'private':
-        update.message.reply_text('Давайте лучше пообщаемся в личке')
+        update.message.reply_text('Давайте не будем никому мешать и пообщаемся в личных сообщениях 🤫')
         return ConversationHandler.END
     global day, month, year, chat_id
     chat_id = update.effective_chat.id
@@ -37,7 +37,7 @@ def reserve(update: Update, context: CallbackContext):
 
     str_day = f'0{day}' if day < 10 else day
     str_month = f'0{month}' if month < 10 else month
-    update.message.reply_text('Введите дату брони',
+    update.message.reply_text('📅 Введите дату брони\n\nДля отмены - /cancel',
                               reply_markup=InlineKeyboardMarkup(
                                   get_date_keyboard(str_day, str_month, year))
                               )
@@ -60,7 +60,7 @@ def increase_date(update: Update, context: CallbackContext):
     str_day = f'0{day}' if day < 10 else day
     str_month = f'0{month}' if month < 10 else month
     query.edit_message_text(
-        text='Введите дату брони',
+        text='Введите дату брони\n\nДля отмены - /cancel',
         reply_markup=InlineKeyboardMarkup(
             get_date_keyboard(str_day, str_month, year))
     )
@@ -82,7 +82,7 @@ def decrease_date(update: Update, context: CallbackContext):
     str_day = f'0{day}' if day < 10 else day
     str_month = f'0{month}' if month < 10 else month
     query.edit_message_text(
-        text='Введите дату брони',
+        text='📅 Введите дату брони\n\nДля отмены - /cancel',
         reply_markup=InlineKeyboardMarkup(
             get_date_keyboard(str_day, str_month, year))
     )
@@ -98,7 +98,7 @@ def date(update: Update, context: CallbackContext):
     if int(event_date[:2]) < datetime.datetime.today().day or int(event_date[3:5]) < datetime.datetime.today().month:
         global chat_id
         context.bot.send_message(
-            chat_id=chat_id, text='Дата не может быть в прошлом. Ну вот, все по новой теперь..\n\n /reserve')
+            chat_id=chat_id, text='❗️Дата не может быть в прошлом. Ну вот, все по новой теперь..\n\n 📝 /reserve')
         return ConversationHandler.END
 
     hour = datetime.datetime.now().hour
@@ -107,7 +107,7 @@ def date(update: Update, context: CallbackContext):
     str_min = f'0{minute}' if minute < 10 else minute
     str_h = f'0{hour}' if hour < 10 else hour
     query.edit_message_text(
-        text='Введите время начала брони',
+        text='Введите время начала брони\n\nДля отмены - /cancel',
         reply_markup=InlineKeyboardMarkup(
             get_time_keyboard(str_h, str_min, '🕒start'))
     )
@@ -123,7 +123,7 @@ def increase_time(update: Update, context: CallbackContext):
 
     global hour, minute
     if query.data.startswith('inc_hour'):
-        if hour == 20:
+        if hour >= 20:
             hour = 8
         else:
             hour += 1
@@ -143,7 +143,7 @@ def increase_time(update: Update, context: CallbackContext):
     str_h = f'0{hour}' if hour < 10 else hour
     state = 'начала' if query.data.endswith('start') else 'окончания'
     query.edit_message_text(
-        text=f'Введите время {state} брони',
+        text=f'Введите время {state} брони\n\nДля отмены - /cancel',
         reply_markup=InlineKeyboardMarkup(get_time_keyboard(
             str_h, str_min, 'start' if query.data.endswith('🕒start') else '⏰end'
         )
@@ -157,7 +157,7 @@ def decrease_time(update: Update, context: CallbackContext):
 
     global hour, minute
     if query.data.startswith('dec_hour'):
-        if hour == 8:
+        if hour <= 8:
             hour = 20
         else:
             hour -= 1
@@ -173,7 +173,7 @@ def decrease_time(update: Update, context: CallbackContext):
     str_h = f'0{hour}' if hour < 10 else hour
     state = 'начала' if query.data.endswith('start') else 'окончания'
     query.edit_message_text(
-        text=f'Введите время {state} брони',
+        text=f'Введите время {state} брони\n\nДля отмены - /cancel',
         reply_markup=InlineKeyboardMarkup(get_time_keyboard(
             str_h, str_min, 'start' if query.data.endswith('🕒start') else '⏰end'
         )
@@ -193,7 +193,7 @@ def start(update: Update, context: CallbackContext):
     str_min = f'0{minute}' if minute < 10 else minute
     str_h = f'0{hour}' if hour < 10 else hour
     query.edit_message_text(
-        text='Введите время окончания брони',
+        text='Введите время окончания брони\n\nДля отмены - /cancel',
         reply_markup=InlineKeyboardMarkup(
             get_time_keyboard(str_h, str_min, '⏰end'))
     )
@@ -207,7 +207,7 @@ def end(update: Update, context: CallbackContext):
 
     global chat_id, event_end
     event_end = query.data
-    context.bot.send_message(chat_id=chat_id, text='Введите описание')
+    context.bot.send_message(chat_id=chat_id, text='🖊Введите описание\n\nДля отмены - /cancel')
 
     return DESCRIPTION
 
@@ -218,7 +218,7 @@ def description(update: Update, context: CallbackContext):
     event_start = datetime.datetime.strptime(event_date + ' ' + event_start, '%d.%m.%Y %H:%M')
     event_end = datetime.datetime.strptime(event_date + ' ' + event_end, '%d.%m.%Y %H:%M')
 
-    validator = ReserveValidator(event_start, event_end, update.message.text)
+    validator = EventValidator(event_start, event_end, update.message.text)
     success, mess = validator.duration_validation()
     if not success:
         logger.error(mess)
@@ -229,7 +229,7 @@ def description(update: Update, context: CallbackContext):
         str_min = f'0{minute}' if minute < 10 else minute
         str_h = f'0{hour}' if hour < 10 else hour
         update.message.reply_text(
-            text='Введите время начала брони',
+            text='Введите время начала брони\n\nДля отмены - /cancel',
             reply_markup=InlineKeyboardMarkup(
                 get_time_keyboard(str_h, str_min, '🕒start'))
         )
@@ -247,9 +247,9 @@ def description(update: Update, context: CallbackContext):
         update.message.reply_text(event[1])
         return ConversationHandler.END
 
-    update.message.reply_text('Событие создано')
+    update.message.reply_text('Событие создано \n\n /reserve \n /display \n /my_events')
     context.bot.send_message(chat_id=validator.group.tg_id,
-                             text='Только что было создано новое событие \n\n'
+                             text='Создана новая бронь конференц. зала: \n\n'
                              f'Дата начала: {validator.start}\n'
                              f'Дата окончания: {validator.end}\n'
                              f'Описание: {validator.description}'
@@ -258,10 +258,10 @@ def description(update: Update, context: CallbackContext):
 
 
 def cancel(update: Update, context: CallbackContext):
-    update.callback_query.answer()
+    # update.callback_query.answer()
     global chat_id
     context.bot.send_message(
-        chat_id=chat_id, text='Мое дело предложить - Ваше отказаться')
+        chat_id=chat_id, text='Мое дело предложить - Ваше отказаться \n\n📝 /reserve \n🖥 /display \n🗃 /my_events')
     return ConversationHandler.END
 
 

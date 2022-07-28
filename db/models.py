@@ -9,11 +9,14 @@ dotenv_path = os.path.join(_BASE_DIR, '.env')
 if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)
 
-db_username = os.environ['DB_USERNAME']
-db_password = os.environ['DB_PASSWORD']
-db_name = os.environ['DB_NAME']
+# db_username = os.environ['DB_USERNAME']
+# db_password = os.environ['DB_PASSWORD']
+# db_name = os.environ['DB_NAME']
+# engine = create_engine(f'postgresql://{db_username}:{db_password}@localhost:5432/{db_name}', echo=True)
 
-engine = create_engine(f'postgresql://{db_username}:{db_password}@localhost:5432/{db_name}', echo=True)
+# Heroku
+DATABASE_URL = os.environ['DATABASE_URL']
+engine = create_engine('postgresql'+DATABASE_URL[8:], echo=True)
 
 Base = declarative_base()
 Session = sessionmaker()
