@@ -23,6 +23,7 @@ file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(mes
 logger.addHandler(file_handler)
 
 local_session = Session(bind=engine)
+TZ = datetime.timezone(datetime.timedelta(hours=5), 'Uzbekistan/UTC+5')
 
 # cron = CronTab(user='uzinfocom')
 # job = cron.new(command='echo hello_world')
@@ -31,7 +32,7 @@ local_session = Session(bind=engine)
 
 def clear_db():
     logger.info('!*!*!*!*!* cron job !*!*!*!*!**!')
-    today = datetime.datetime.today()
+    today = datetime.datetime.now(TZ)
     overdue_events = local_session.query(Event).filter(Event.end < today)
     if overdue_events:
         for event in overdue_events:    

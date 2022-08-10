@@ -12,9 +12,8 @@ def start(update: Update, context: CallbackContext):
     statement = select(Group)
     group = local_session.execute(statement).scalars().first()
     author = context.bot.get_chat_member(group.tg_id, update.effective_user.id)
-    # проверка группы еще по названию нужна
     if author.status == 'left' or author.status == 'kicked' or not author.status:
-        context.bot.send_message(chat_id=update.effective_chat.id, text="У Вас нет прав общаться со мной")
+        context.bot.send_message(chat_id=update.effective_chat.id, text="Вы не состоите ни в одной группе, где есть я")
     else:
         reply_keyboard = [['/reserve', '/display', '/my_events']]
         markup_key = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)

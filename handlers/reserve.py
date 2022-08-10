@@ -23,6 +23,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 DATE, START, END, DESCRIPTION = range(4)
+TZ = datetime.timezone(datetime.timedelta(hours=5), 'Uzbekistan/UTC+5')
 
 
 def reserve(update: Update, context: CallbackContext):
@@ -31,9 +32,9 @@ def reserve(update: Update, context: CallbackContext):
         return ConversationHandler.END
     global day, month, year, chat_id
     chat_id = update.effective_chat.id
-    day = datetime.datetime.today().day
-    month = datetime.datetime.today().month
-    year = datetime.datetime.today().year
+    day = datetime.datetime.now(TZ).day
+    month = datetime.datetime.now(TZ).month
+    year = datetime.datetime.now(TZ).year
 
     str_day = f'0{day}' if day < 10 else day
     str_month = f'0{month}' if month < 10 else month
@@ -95,14 +96,14 @@ def date(update: Update, context: CallbackContext):
     global day, hour, minute, event_date
     event_date = query.data
 
-    if int(event_date[:2]) < datetime.datetime.today().day or int(event_date[3:5]) < datetime.datetime.today().month:
+    if int(event_date[:2]) < datetime.datetime.now(TZ).day or int(event_date[3:5]) < datetime.datetime.now(TZ).month:
         global chat_id
         context.bot.send_message(
             chat_id=chat_id, text='❗️Дата не может быть в прошлом. Ну вот, все по новой теперь..\n\n 📝 /reserve')
         return ConversationHandler.END
 
-    hour = datetime.datetime.now().hour
-    minute = datetime.datetime.now().minute
+    hour = datetime.datetime.now(TZ).hour if datetime.datetime.now(TZ).hour < 20 or datetime.datetime.now(TZ).hour > 8 else 8
+    minute = datetime.datetime.now(TZ).minute
 
     str_min = f'0{minute}' if minute < 10 else minute
     str_h = f'0{hour}' if hour < 10 else hour
@@ -223,8 +224,8 @@ def description(update: Update, context: CallbackContext):
     if not success:
         logger.error(mess)
         update.message.reply_text(mess)
-        hour = datetime.datetime.now().hour
-        minute = datetime.datetime.now().minute
+        hour = datetime.datetime.now(TZ).hour
+        minute = datetime.datetime.now(TZ).minute
 
         str_min = f'0{minute}' if minute < 10 else minute
         str_h = f'0{hour}' if hour < 10 else hour
@@ -249,10 +250,11 @@ def description(update: Update, context: CallbackContext):
 
     update.message.reply_text('Событие создано \n\n /reserve \n /display \n /my_events')
     context.bot.send_message(chat_id=validator.group.tg_id,
-                             text='Создана новая бронь конференц. зала: \n\n'
+                             text='Новая бронь конференц. зала: \n\n'
                              f'Дата начала: {validator.start}\n'
                              f'Дата окончания: {validator.end}\n'
-                             f'Описание: {validator.description}'
+                             f'Описание: {validator.description}\n'
+                             f'Автор: {update.effective_user.first_name} (@{update.effective_user.username})'
                              )
     return ConversationHandler.END
 
