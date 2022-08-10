@@ -22,6 +22,8 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+TZ = datetime.timezone(datetime.timedelta(hours=5), 'Uzbekistan/UTC+5')
+
 # TODO: do refactor
 # TODO use pandas to create table and import to jpg with pillow and send to user
 # https://datatofish.com/create-pandas-dataframe/
@@ -60,7 +62,7 @@ def option(update: Update, context: CallbackContext):
     """Parses the CallbackQuery and updates the message text."""
     query = update.callback_query
     query.answer()
-    today = datetime.datetime.today()
+    today = datetime.datetime.now(TZ)
 
     if query.data[-1] == '1':
         """today"""

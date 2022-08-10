@@ -23,9 +23,14 @@ class EventValidator:
             return False, err_message
         return True, ''
 
-    def collision_validation(self):
-        statement = select(Event).filter(or_(and_(Event.start < self.start, Event.end > self.start), and_(
+    def collision_validation(self, edit=False, event_id=None):
+        if edit and event_id:
+            statement = select(Event).filter(or_(and_(Event.start < self.start, Event.end > self.start), and_(
+            Event.start < self.end, Event.end > self.end))).filter(Event.id!=event_id)
+        else:
+            statement = select(Event).filter(or_(and_(Event.start < self.start, Event.end > self.start), and_(
             Event.start < self.end, Event.end > self.end)))
+
         events = self.session.execute(statement).all()
         if events:
             err_message = 'Событие на это время уже запланировано. \n\n /reserve \n /display'
