@@ -332,6 +332,7 @@ edit_handler = ConversationHandler(
         DESCRIPTION: [MessageHandler(Filters.text & ~Filters.command, description)],
     },
     fallbacks=[CommandHandler('cancel', cancel)],
+    conversation_timeout=datetime.timedelta(seconds=60)
 )
 
 
