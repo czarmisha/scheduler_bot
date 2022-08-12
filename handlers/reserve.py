@@ -241,7 +241,17 @@ def description(update: Update, context: CallbackContext):
     if not collision[0]:
         logger.error(collision[1])
         update.message.reply_text(collision[1])
-        return ConversationHandler.END
+        hour = datetime.datetime.now(TZ).hour
+        minute = datetime.datetime.now(TZ).minute
+
+        str_min = f'0{minute}' if minute < 10 else minute
+        str_h = f'0{hour}' if hour < 10 else hour
+        update.message.reply_text(
+            text=f"{messages['select_start_time']['ru']} / {messages['select_start_time']['uz']}",
+            reply_markup=InlineKeyboardMarkup(
+                get_time_keyboard(str_h, str_min, '🕒start'))
+        )
+        return START
     event = validator.create_event(update.effective_user)
     if not event[0]:
         logger.error(event[1])
@@ -249,7 +259,7 @@ def description(update: Update, context: CallbackContext):
         return ConversationHandler.END
 
     update.message.reply_text(f"{messages['event_is_created']['ru']} / {messages['event_is_created']['uz']} \n\n /reserve \n /display \n /my_events")
-    author = f"@{event.effective_user.username}" if event.effective_user.username else f"{event.effective_user.first_name}"
+    author = f"@{update.effective_user.username}" if update.effective_user.username else f"{update.effective_user.first_name}"
     context.bot.send_message(chat_id=validator.group.tg_id,
                              text=f"{messages['new_event']['ru']}: \n\n"
                              f"{messages['start']['ru']}: {validator.start}\n"

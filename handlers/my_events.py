@@ -289,7 +289,17 @@ def description(update: Update, context: CallbackContext):
     if not collision[0]:
         logger.error(collision[1])
         update.message.reply_text(collision[1])
-        return ConversationHandler.END
+        hour = datetime.datetime.now(TZ).hour
+        minute = datetime.datetime.now(TZ).minute
+
+        str_min = f'0{minute}' if minute < 10 else minute
+        str_h = f'0{hour}' if hour < 10 else hour
+        update.message.reply_text(
+            text=f"{messages['select_start_time']['ru']} / {messages['select_start_time']['uz']}",
+            reply_markup=InlineKeyboardMarkup(
+                get_time_keyboard(str_h, str_min, '🕒start'))
+        )
+        return START
 
     event.description = update.effective_message.text
     event.start = event_start
