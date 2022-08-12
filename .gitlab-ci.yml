@@ -5,7 +5,9 @@ stages:
 deploy-job:
   stage: deploy
   only:
-      - main
+    - main
+  tags:
+    - tgbot
   when: manual
   script:
     - echo "Deploying application..."
