@@ -43,14 +43,10 @@ def display(update: Update, context: CallbackContext):
     global chat_id
     chat_id = update.effective_chat.id
     keyboard = [
-        [
-            InlineKeyboardButton(f"{messages['display_today']['ru']} \n{messages['display_today']['uz']}", callback_data="display_1"),
-            InlineKeyboardButton(f"{messages['display_tomorrow']['ru']} \n{messages['display_tomorrow']['uz']}", callback_data="display_2"),
-        ],
-        [
-            InlineKeyboardButton(f"{messages['display_this_week']['ru']} \n{messages['display_this_week']['uz']}", callback_data="display_3"),
-            InlineKeyboardButton(f"{messages['display_next_week']['ru']} \n{messages['display_next_week']['uz']}", callback_data="display_4"),
-        ],
+        [InlineKeyboardButton(f"{messages['display_today']['ru']} / {messages['display_today']['uz']}", callback_data="display_1")],
+        [InlineKeyboardButton(f"{messages['display_tomorrow']['ru']} / {messages['display_tomorrow']['uz']}", callback_data="display_2")],
+        [InlineKeyboardButton(f"{messages['display_this_week']['ru']} / {messages['display_this_week']['uz']}", callback_data="display_3")],
+        [InlineKeyboardButton(f"{messages['display_next_week']['ru']} / {messages['display_next_week']['uz']}", callback_data="display_4")],
     ]
 
     reply_markup = InlineKeyboardMarkup(keyboard)

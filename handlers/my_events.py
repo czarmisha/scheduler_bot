@@ -64,8 +64,8 @@ def sel_event(update: Update, context: CallbackContext):
             f"✅ {messages['your_select']['uz']}:\n{messages['start']['uz']} {event.start}\n{messages['end']['uz']} {event.end}\n{messages['description']['uz']} {event.description}\n\n{messages['select_action']['uz']}",
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(f"🚮 {messages['delete']['ru']} / {messages['delete']['uz']}", callback_data=f'del_event'),
-                InlineKeyboardButton(f"✏️ {messages['edit']['ru']} / {messages['edit']['uz']}", callback_data=f'edit_event')],
+                [InlineKeyboardButton(f"✏️ {messages['edit']['ru']} / {messages['edit']['uz']}", callback_data=f'edit_event')],
+                [InlineKeyboardButton(f"🗑 {messages['delete']['ru']} / {messages['delete']['uz']}", callback_data=f'del_event')]
             ],
         )
     )
@@ -76,7 +76,7 @@ def del_event(update: Update, context: CallbackContext):
     query.answer()
     local_session.delete(event)
     local_session.commit()
-    context.bot.send_message(chat_id, f"⚰️🚽 {messages['event_is_deleted']['ru']}\n\t\t{messages['event_is_deleted']['uz']}\n\n📝 /reserve \n🖥 /display \n🗃 /my_events")
+    context.bot.send_message(chat_id, f"🗑 {messages['event_is_deleted']['ru']}\n\t\t{messages['event_is_deleted']['uz']}\n\n📝 /reserve \n🖥 /display \n🗃 /my_events")
 
 def edit_event(update: Update, context: CallbackContext):
     global event, day, month, year, event_id
