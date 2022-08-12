@@ -93,6 +93,7 @@ def decrease_date(update: Update, context: CallbackContext):
 def date(update: Update, context: CallbackContext):
     query = update.callback_query
     query.answer()
+    logging.info(ConversationHandler.TEMEOUT)
 
     global day, hour, minute, event_date
     event_date = query.data
@@ -300,4 +301,5 @@ reserve_handler = ConversationHandler(
         DESCRIPTION: [MessageHandler(Filters.text & ~Filters.command, description)],
     },
     fallbacks=[CommandHandler('cancel', cancel)],
+    conversation_timeout=datetime.timedelta(seconds=60)
 )
