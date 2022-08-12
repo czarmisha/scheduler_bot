@@ -63,11 +63,11 @@ messages = {
     },
     'hours': {
         'ru': 'Часы',
-        'uz': 'Soatlar'
+        'uz': 'Soat'
     },
     'minutes': {
         'ru': 'Минуты',
-        'uz': 'Daqiqalar'
+        'uz': 'Daqiqa'
     },
     'select_event': {
         'ru': 'Выберите событие',
