@@ -13,6 +13,7 @@ from telegram.ext import (
 )
 from sqlalchemy import select, and_
 
+from utils.translation import messages
 from db.models import Event, Session, engine
 
 local_session = Session(bind=engine)
@@ -37,25 +38,24 @@ TZ = datetime.timezone(datetime.timedelta(hours=5), 'Uzbekistan/UTC+5')
 
 def display(update: Update, context: CallbackContext):
     if not update.message.chat.type == 'private':
-        update.message.reply_text('Давайте не будем никому мешать и пообщаемся в личных сообщениях 🤫')
+        update.message.reply_text(f"{messages['private_error']['ru']}\n\n{messages['private_error']['uz']}")
         return 
     global chat_id
     chat_id = update.effective_chat.id
     keyboard = [
         [
-            InlineKeyboardButton("На сегодня", callback_data="display_1"),
-            InlineKeyboardButton("На завтра", callback_data="display_2"),
+            InlineKeyboardButton(f"{messages['display_today']['ru']} \n{messages['display_today']['uz']}", callback_data="display_1"),
+            InlineKeyboardButton(f"{messages['display_tomorrow']['ru']} \n{messages['display_tomorrow']['uz']}", callback_data="display_2"),
         ],
         [
-            InlineKeyboardButton("На эту неделю", callback_data="display_3"),
-            InlineKeyboardButton("На следующую неделю",
-                                 callback_data="display_4"),
+            InlineKeyboardButton(f"{messages['display_this_week']['ru']} \n{messages['display_this_week']['uz']}", callback_data="display_3"),
+            InlineKeyboardButton(f"{messages['display_next_week']['ru']} \n{messages['display_next_week']['uz']}", callback_data="display_4"),
         ],
     ]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    update.message.reply_text("📅Выберите дату:", reply_markup=reply_markup)
+    update.message.reply_text(f"{messages['select_date']['ru']}\n{messages['select_date']['uz']}", reply_markup=reply_markup)
 
 
 def option(update: Update, context: CallbackContext):
@@ -104,29 +104,31 @@ def get_events(start, end):
     return local_session.execute(statement).scalars().all()
 
 def create_text(events, period):
-    text = '📖Список броней как вы и просили: \n\n'
+    text = f"📖 {messages['event_list']['ru']}\n{messages['event_list']['uz']}\n\n"
     week = {
-        1: '\n📅Понедельник: \n',
-        2: '\n📅Вторник: \n',
-        3: '\n📅Среда: \n',
-        4: '\n📅Четверг: \n',
-        5: '\n📅Пятница: \n',
+        1: f"\n📅 {messages['monday']['ru']} / {messages['monday']['uz']}: \n",
+        2: f"\n📅 {messages['tuesday']['ru']} / {messages['tuesday']['uz']}: \n",
+        3: f"\n📅 {messages['wednesday']['ru']} / {messages['wednesday']['uz']}: \n",
+        4: f"\n📅 {messages['thursday']['ru']} / {messages['thursday']['uz']}: \n",
+        5: f"\n📅 {messages['friday']['ru']} / {messages['friday']['uz']}: \n",
     }
     if period == '1' or period == '2':
         for event in events:
+            author = f"@{event.author_username}" if event.author_username else f"{event.author_firstname}"
             start_hour = event.start.hour if event.start.hour > 9 else f'0{event.start.hour}'
             start_minute = event.start.minute if event.start.minute > 9 else f'0{event.start.minute}'
             end_hour = event.end.hour if event.end.hour > 9 else f'0{event.end.hour}'
             end_minute = event.end.minute if event.end.minute > 9 else f'0{event.end.minute}'
-            text += f'\t\t {start_hour}:{start_minute} - {end_hour}:{end_minute} {event.description} \n'
+            text += f'\t\t {start_hour}:{start_minute} - {end_hour}:{end_minute} {event.description} [{author}] \n'
 
     else:
         for event in events:
+            author = f"@{event.author_username}" if event.author_username else f"{event.author_firstname}"
             start_hour = event.start.hour if event.start.hour > 9 else f'0{event.start.hour}'
             start_minute = event.start.minute if event.start.minute > 9 else f'0{event.start.minute}'
             end_hour = event.end.hour if event.end.hour > 9 else f'0{event.end.hour}'
             end_minute = event.end.minute if event.end.minute > 9 else f'0{event.end.minute}'
-            week[event.start.isoweekday()] += f'\t {start_hour}:{start_minute} - {end_hour}:{end_minute} {event.description} \n'
+            week[event.start.isoweekday()] += f'\t\t {start_hour}:{start_minute} - {end_hour}:{end_minute} {event.description} [{author}] \n'
 
         for str in week.values():
             text += str

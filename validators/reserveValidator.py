@@ -1,6 +1,7 @@
 from sqlalchemy import select, and_, or_
 from sqlalchemy.exc import MultipleResultsFound
 from db.models import Group, Calendar, Event, Session, engine
+from utils.translation import messages
 
 
 class ReserveValidator:
@@ -16,10 +17,10 @@ class ReserveValidator:
         """
         diff = self.end - self.start
         if diff.total_seconds() < 300:
-            err_message = 'Событие не может длиться меньше 5минут'
+            err_message = f"{messages['duration_err_1']['ru']}\n{messages['duration_err_1']['uz']}"
             return False, err_message
         elif diff.total_seconds() > 28800:
-            err_message = 'Событие не может длиться больше 8 часов'
+            err_message = f"{messages['duration_err_2']['ru']}\n{messages['duration_err_2']['uz']}"
             return False, err_message
         return True, ''
 
@@ -28,7 +29,7 @@ class ReserveValidator:
         Event.start < self.end, Event.end > self.end)))
         events = self.session.execute(statement).all()
         if events:
-            err_message = 'Событие на это время уже запланировано. \n\n /reserve \n /display'
+            err_message = f"{messages['collision_err']['ru']} / {messages['collision_err']['uz']} \n\n /reserve \n /display"
             return False, err_message
         return True, ''
 
@@ -54,7 +55,7 @@ class ReserveValidator:
             return False, err_message
         return True, self.calendar
 
-    def create_event(self, user_id):
+    def create_event(self, user):
         calendar = self.get_calendar()
         if not calendar[0]:
             return calendar
@@ -64,7 +65,9 @@ class ReserveValidator:
             end=self.end,
             description=self.description,
             calendar_id=self.calendar.id,
-            user_tg_id=user_id,
+            author_id=user.id,
+            author_firstname=user.first_name,
+            author_username=user.username if user.username else '',
         )
         self.session.add(self.event)
         self.session.commit()

@@ -40,5 +40,6 @@ def clean(group_id):
     logger.info(f'!*!*!*!*!* Deleting group \"{group.name}\" from db !*!*!*!*!* ')
     local_session.delete(group)
     local_session.commit()
+    local_session.close()
 
     
