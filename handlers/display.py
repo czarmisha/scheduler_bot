@@ -38,18 +38,18 @@ TZ = datetime.timezone(datetime.timedelta(hours=5), 'Uzbekistan/UTC+5')
 
 def display(update: Update, context: CallbackContext):
     if not update.message.chat.type == 'private':
-        update.message.reply_text(f"{messages['private_error']['ru']} \n\n {messages['private_error']['uz']}")
+        update.message.reply_text(f"{messages['private_error']['ru']}\n\n{messages['private_error']['uz']}")
         return 
     global chat_id
     chat_id = update.effective_chat.id
     keyboard = [
         [
-            InlineKeyboardButton(f"{messages['display_today']['ru']} \n {messages['display_today']['uz']}", callback_data="display_1"),
-            InlineKeyboardButton(f"{messages['display_tomorrow']['ru']} \n {messages['display_tomorrow']['uz']}", callback_data="display_2"),
+            InlineKeyboardButton(f"{messages['display_today']['ru']} \n{messages['display_today']['uz']}", callback_data="display_1"),
+            InlineKeyboardButton(f"{messages['display_tomorrow']['ru']} \n{messages['display_tomorrow']['uz']}", callback_data="display_2"),
         ],
         [
-            InlineKeyboardButton(f"{messages['display_this_week']['ru']} \n {messages['display_this_week']['uz']}", callback_data="display_3"),
-            InlineKeyboardButton(f"{messages['display_next_week']['ru']} \n {messages['display_next_week']['uz']}", callback_data="display_4"),
+            InlineKeyboardButton(f"{messages['display_this_week']['ru']} \n{messages['display_this_week']['uz']}", callback_data="display_3"),
+            InlineKeyboardButton(f"{messages['display_next_week']['ru']} \n{messages['display_next_week']['uz']}", callback_data="display_4"),
         ],
     ]
 

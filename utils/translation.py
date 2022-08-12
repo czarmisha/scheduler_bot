@@ -185,18 +185,18 @@ messages = {
     },
     'select_action':{
         'ru': 'Выберите действие',
-        'uz': ''
+        'uz': 'Amalni tanlang'
     },
     'duration_err_1':{
         'ru': 'Событие не может длиться меньше 5минут',
-        'uz': ''
+        'uz': 'Tadbir 5 daqiqadan kam bo\'lmasligi kerak'
     },
     'duration_err_2':{
         'ru': 'Событие не может длиться больше 8 часов',
-        'uz': ''
+        'uz': 'Tadbir 8 soatdan ortiq bo\'lmasligi kerak'
     },
     'collision_err':{
         'ru': 'Событие на это время уже запланировано.',
-        'uz': ''
+        'uz': 'Ushbu vaqt oralig\'ida boshqa tadbir rejalashtirilgan'
     },
 }
