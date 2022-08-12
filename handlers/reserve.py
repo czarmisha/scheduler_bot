@@ -249,12 +249,13 @@ def description(update: Update, context: CallbackContext):
         return ConversationHandler.END
 
     update.message.reply_text(f"{messages['event_is_created']['ru']} / {messages['event_is_created']['uz']} \n\n /reserve \n /display \n /my_events")
+    author = f"@{event.effective_user.username}" if event.effective_user.username else f"{event.effective_user.first_name}"
     context.bot.send_message(chat_id=validator.group.tg_id,
                              text=f"{messages['new_event']['ru']}: \n\n"
                              f"{messages['start']['ru']}: {validator.start}\n"
                              f"{messages['end']['ru']}: {validator.end}\n"
                              f"{messages['description']['ru']}: {validator.description}\n"
-                             f"{messages['author']['ru']}: {update.effective_user.first_name} (@{update.effective_user.username})"
+                             f"{messages['author']['ru']}: {author}"
                              f"\n\n{messages['new_event']['uz']}: \n\n"
                              f"{messages['start']['uz']}: {validator.start}\n"
                              f"{messages['end']['uz']}: {validator.end}\n"
