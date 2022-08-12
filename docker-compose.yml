@@ -10,6 +10,8 @@ services:
       context: .
       dockerfile: Dockerfile.bot
     container_name: bot
+    volumes:
+      - .:/app
     env_file:
       - .env
     restart: unless-stopped
