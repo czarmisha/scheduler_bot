@@ -27,9 +27,17 @@ class ReserveValidator:
     def collision_validation(self):
         statement = select(Event).filter(or_(and_(Event.start < self.start, Event.end > self.start), and_(
         Event.start < self.end, Event.end > self.end)))
-        events = self.session.execute(statement).all()
+        events = self.session.execute(statement).scalars().all()
         if events:
-            err_message = f"{messages['collision_err']['ru']} / {messages['collision_err']['uz']}"
+            err_message = f"{messages['collision_err']['ru']} / {messages['collision_err']['uz']}: \n\n"
+            for event in events:
+                author = f"@{event.author_username}" if event.author_username else f"{event.author_firstname}"
+                start_hour = event.start.hour if event.start.hour > 9 else f'0{event.start.hour}'
+                start_minute = event.start.minute if event.start.minute > 9 else f'0{event.start.minute}'
+                end_hour = event.end.hour if event.end.hour > 9 else f'0{event.end.hour}'
+                end_minute = event.end.minute if event.end.minute > 9 else f'0{event.end.minute}'
+                text = f'\t\t{event.start.day}.{event.start.month}.{event.start.year} {start_hour}:{start_minute} - {end_hour}:{end_minute} {event.description} [{author}] \n'
+                err_message += text
             return False, err_message
         return True, ''
 
