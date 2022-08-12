@@ -1,0 +1,16 @@
+stages:
+  - deploy
+
+
+deploy-job:
+  stage: deploy
+  only:
+    - main
+  tags:
+    - tgbot
+  script:
+    - echo "Deploying application..."
+    - git -C /home/project/event-scheduler pull
+    - sudo docker-compose -f /home/project/event-scheduler/docker-compose.yml build
+    - sudo docker-compose -f /home/project/event-scheduler/docker-compose.yml restart
+    - echo "Application successfully deployed."
