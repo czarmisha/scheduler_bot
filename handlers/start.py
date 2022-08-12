@@ -19,7 +19,7 @@ def start(update: Update, context: CallbackContext):
                                  text=f"{messages['auth_err']['ru']} / {messages['auth_err']['uz']}")
     else:
         reply_keyboard = [['/reserve', '/display', '/my_events']]
-        markup_key = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+        markup_key = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True, resize_keyboard=True)
 
         update.message.reply_text(f"{messages['start_text']['ru']} \n\n {messages['start_text']['uz']}",
                                   reply_markup=markup_key)
