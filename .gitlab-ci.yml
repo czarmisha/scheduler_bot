@@ -8,10 +8,9 @@ deploy-job:
     - main
   tags:
     - tgbot
-  when: manual
   script:
     - echo "Deploying application..."
     - git -C /home/project/event-scheduler pull
-    - docker-compose -f /home/project/event-scheduler/docker-compose.yml build
-    - docker-compose -f /home/project/event-scheduler/docker-compose.yml restart
+    - sudo docker-compose -f /home/project/event-scheduler/docker-compose.yml build
+    - sudo docker-compose -f /home/project/event-scheduler/docker-compose.yml restart
     - echo "Application successfully deployed."
