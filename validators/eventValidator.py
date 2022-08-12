@@ -34,7 +34,7 @@ class EventValidator:
 
         events = self.session.execute(statement).all()
         if events:
-            err_message = f"{messages['collision_err']['ru']} / {messages['collision_err']['uz']} \n\n /reserve \n /display"
+            err_message = f"{messages['collision_err']['ru']} / {messages['collision_err']['uz']}"
             return False, err_message
         return True, ''
 
