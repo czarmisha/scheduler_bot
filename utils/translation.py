@@ -168,8 +168,8 @@ messages = {
               'Команда /my_events, чтобы отобразить ваш список мероприятий\n'
               'Команда /display, чтобы отобразить список брони.\n\n'
               'по вопросам и предложениям - @m_dergachyov',
-        'uz': '\nMening Uzinfocomning tadbirlari rejalashtiruvchisi deb atashadi.'
-              'Mana men nimalarga qodirman:\n\n'
+        'uz': '\nMeni Uzinfocomning tadbirlari rejalashtiruvchisi deb atashadi.\n'
+              'Mana men nimalar qila olaman:\n\n'
               '/reserve buyrug\'i orqali zalda tadbir rejalashtirish mumkin\n'
               '/my_events buyrug\'i orqali o\'zingiz rejalashtirilgan tadbirlarni ko\'rishingiz mumkin\n'
               '/display buyrug\'i orqali barcha rejalashtirilgan tadbirlar ro\'yxatini ko\'rishingiz mumkin\n\n'
