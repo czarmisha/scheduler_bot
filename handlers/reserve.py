@@ -316,6 +316,5 @@ reserve_handler = ConversationHandler(
     allow_reentry=True,
     run_async=True,
     per_user=True,
-    per_message=True,
     per_chat=True
 )
