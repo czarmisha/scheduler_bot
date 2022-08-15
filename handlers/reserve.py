@@ -217,10 +217,10 @@ def end(update: Update, context: CallbackContext):
 def description(update: Update, context: CallbackContext):
     global event_date, event_start, event_end
     
-    e_date = event_date.strftime('%d.%m.%Y')
+    logging.info(f"DEBUG TYPES: {type(event_date)} {type(event_start)} {type(event_end)})
 
-    event_start = datetime.datetime.strptime(e_date + ' ' + event_start, '%d.%m.%Y %H:%M')
-    event_end = datetime.datetime.strptime(e_date + ' ' + event_end, '%d.%m.%Y %H:%M')
+    event_start = datetime.datetime.strptime(event_date + ' ' + event_start, '%d.%m.%Y %H:%M')
+    event_end = datetime.datetime.strptime(event_date + ' ' + event_end, '%d.%m.%Y %H:%M')
 
     validator = EventValidator(event_start, event_end, update.message.text)
     success, mess = validator.duration_validation()
