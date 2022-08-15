@@ -6,4 +6,6 @@ WORKDIR /app
 
 RUN pip install -r requirements.txt
 
+ENV PYTHONDONTWRITEBYTECODE=True
+
 CMD ["python", "main.py"]
