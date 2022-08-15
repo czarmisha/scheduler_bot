@@ -217,6 +217,8 @@ def end(update: Update, context: CallbackContext):
 def description(update: Update, context: CallbackContext):
     global event_date, event_start, event_end
     
+    logging.info(f"DEBUG TYPES: {type(event_date)} {type(event_start)} {type(event_end)})")
+
     event_start = datetime.datetime.strptime(event_date + ' ' + event_start, '%d.%m.%Y %H:%M')
     event_end = datetime.datetime.strptime(event_date + ' ' + event_end, '%d.%m.%Y %H:%M')
 
