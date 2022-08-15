@@ -4,6 +4,8 @@ stages:
 
 deploy-job:
   stage: deploy
+  variables:
+    GIT_STRATEGY: none
   only:
     - main
   tags:
