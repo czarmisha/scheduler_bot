@@ -220,7 +220,7 @@ def description(update: Update, context: CallbackContext):
     e_date = datetime.datetime.strftime(event_date, '%d.%m.%Y')
 
     event_start = datetime.datetime.strptime(e_date + ' ' + event_start, '%d.%m.%Y %H:%M')
-    event_end = datetime.datetime.strptime(e_date + ' ' + event_end, '%d.%m.%Y %H:%M'
+    event_end = datetime.datetime.strptime(e_date + ' ' + event_end, '%d.%m.%Y %H:%M')
 
     validator = EventValidator(event_start, event_end, update.message.text)
     success, mess = validator.duration_validation()
