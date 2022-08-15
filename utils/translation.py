@@ -199,4 +199,8 @@ messages = {
         'ru': 'Событие на это время уже запланировано.',
         'uz': 'Ushbu vaqt oralig\'ida boshqa tadbir rejalashtirilgan'
     },
+    'display_group':{
+        'ru': 'Также доступны другие периоды времени в личных сообщениях по команде /display',
+        'uz': 'need translate'
+    },
 }

@@ -38,10 +38,17 @@ TZ = datetime.timezone(datetime.timedelta(hours=5), 'Uzbekistan/UTC+5')
 
 def display(update: Update, context: CallbackContext):
     if not update.message.chat.type == 'private':
-        update.message.reply_text(f"{messages['private_error']['ru']}\n\n{messages['private_error']['uz']}")
-        return 
-    global chat_id
-    chat_id = update.effective_chat.id
+        today = datetime.datetime.now(TZ)
+        start = today.replace(hour=0, minute=0, second=0, microsecond=0) - \
+            datetime.timedelta(days=today.isoweekday() - 1)
+        end = today.replace(hour=23, minute=59, second=59) + \
+            datetime.timedelta(days=5 - today.isoweekday())
+        text = create_text(get_events(start,end), 3, f"📖 {messages['display_this_week']['ru']} / {messages['display_this_week']['uz']}\n")
+        text += f"\n\n{messages['display_group']['ru']}\n{messages['display_group']['uz']}"
+        update.message.reply_text(text) 
+        return
+
+    context.user_data['chat_id'] = update.effective_chat.id
     keyboard = [
         [InlineKeyboardButton(f"{messages['display_today']['ru']} / {messages['display_today']['uz']}", callback_data="display_1")],
         [InlineKeyboardButton(f"{messages['display_tomorrow']['ru']} / {messages['display_tomorrow']['uz']}", callback_data="display_2")],
@@ -90,7 +97,7 @@ def option(update: Update, context: CallbackContext):
             datetime.timedelta(days=12 - today.isoweekday())
         text = create_text(get_events(start,end), query.data[-1])
         
-    context.bot.send_message(chat_id, text)
+    context.bot.send_message(context.user_data['chat_id'], text)
 
 def get_events(start, end):
     statement = select(Event).filter(and_(
@@ -99,8 +106,8 @@ def get_events(start, end):
                                     )).order_by(Event.start)
     return local_session.execute(statement).scalars().all()
 
-def create_text(events, period):
-    text = f"📖 {messages['event_list']['ru']}\n{messages['event_list']['uz']}\n\n"
+def create_text(events, period, text=None):
+    text = f"📖 {messages['event_list']['ru']}\n{messages['event_list']['uz']}\n\n" if not text else text
     week = {
         1: f"\n📅 {messages['monday']['ru']} / {messages['monday']['uz']}: \n",
         2: f"\n📅 {messages['tuesday']['ru']} / {messages['tuesday']['uz']}: \n",
