@@ -315,5 +315,7 @@ reserve_handler = ConversationHandler(
     conversation_timeout=datetime.timedelta(seconds=60),
     allow_reentry=True,
     run_async=True,
-    per_user=True
+    per_user=True,
+    per_message=True,
+    per_chat=True
 )
