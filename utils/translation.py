@@ -211,6 +211,6 @@ messages = {
     },
     'feedback_complete':{
         'ru': 'Ваша обратная связь отправлена админу\n',
-        'uz': 'translate\n'
+        'uz': 'translate \n'
     },
 }
