@@ -8,7 +8,7 @@ from utils.translation import messages
 
 local_session = Session(bind=engine)
 BODY = range(1)
-_ADMIN_ID = 4644278
+_ADMIN_ID = 4644278 #to env
 
 def feedback(update: Update, context: CallbackContext):
     statement = select(Group)
