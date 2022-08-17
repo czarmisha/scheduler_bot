@@ -136,7 +136,7 @@ def create_text(events, period, text=None):
         for str in week.values():
             text += str
 
-    text += '\n📝 /reserve \n🖥 /display \n🗃 /my_events'
+    text += '\n📝 /reserve \n🖥 /display \n🗃 /my_events\n🗣 /feedback'
     return text
 
 display_handler = CommandHandler("display", display)

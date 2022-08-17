@@ -167,12 +167,14 @@ messages = {
               'Команда /reserve, чтобы забронировать зал.\n'
               'Команда /my_events, чтобы отобразить ваш список мероприятий\n'
               'Команда /display, чтобы отобразить список брони.\n\n'
+              'Команда /feedback для обратной связи с админом.\n\n'
               'по вопросам и предложениям - @m_dergachyov',
         'uz': '\nMeni Uzinfocomning tadbirlari rejalashtiruvchisi deb atashadi.\n'
               'Mana men nimalar qila olaman:\n\n'
               '/reserve buyrug\'i orqali zalda tadbir rejalashtirish mumkin\n'
               '/my_events buyrug\'i orqali o\'zingiz rejalashtirilgan tadbirlarni ko\'rishingiz mumkin\n'
               '/display buyrug\'i orqali barcha rejalashtirilgan tadbirlar ro\'yxatini ko\'rishingiz mumkin\n\n'
+              '/feedback translate\n\n'
               'Savol va takliflar bo\'yicha  - @m_dergachyov'
     },
     'confirm': {
@@ -202,5 +204,13 @@ messages = {
     'display_group':{
         'ru': 'Также доступны другие периоды времени в личных сообщениях по команде /display',
         'uz': 'need translate'
+    },
+    'feedback_title':{
+        'ru': 'Введите текст обратной связи\nЭто может быть предложение или жалоба и тд\n',
+        'uz': 'translate\n'
+    },
+    'feedback_complete':{
+        'ru': 'Ваша обратная связь отправлена админу\n',
+        'uz': 'translate\n'
     },
 }

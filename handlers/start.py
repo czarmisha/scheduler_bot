@@ -7,9 +7,6 @@ from utils.translation import messages
 
 local_session = Session(bind=engine)
 
-RESERVE, DISPLAY = range(2)
-
-
 def start(update: Update, context: CallbackContext):
     statement = select(Group)
     group = local_session.execute(statement).scalars().first()
@@ -18,7 +15,7 @@ def start(update: Update, context: CallbackContext):
         context.bot.send_message(chat_id=update.effective_chat.id,
                                  text=f"{messages['auth_err']['ru']} / {messages['auth_err']['uz']}")
     else:
-        reply_keyboard = [['/reserve', '/display', '/my_events']]
+        reply_keyboard = [['/reserve', '/display'], ['/my_events', '/feedback']]
         markup_key = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True, resize_keyboard=True)
 
         update.message.reply_text(f"{messages['start_text']['ru']} \n\n {messages['start_text']['uz']}",
