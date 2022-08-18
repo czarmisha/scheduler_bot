@@ -5,7 +5,7 @@ from utils.translation import messages
 
 
 class EventValidator:
-    def __init__(self, start, end, description):
+    def __init__(self, start=None, end=None, description=None):
         self.start = start
         self.end = end
         self.description = description

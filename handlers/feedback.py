@@ -1,4 +1,7 @@
 import datetime
+import os
+from pathlib import Path
+from dotenv import load_dotenv
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import CallbackContext, CommandHandler, ConversationHandler, Filters, MessageHandler
 
@@ -7,8 +10,15 @@ from db.models import Group, Session, engine
 from utils.translation import messages
 
 local_session = Session(bind=engine)
+
+_BASE_DIR = Path(__file__).resolve().parent.parent
+dotenv_path = os.path.join(_BASE_DIR, '.env')
+if os.path.exists(dotenv_path):
+    load_dotenv(dotenv_path)
+
 BODY = range(1)
-_ADMIN_ID = 4644278 #to env
+# _ADMIN_ID = os.environ['ADMIN_ID']
+_ADMIN_ID=4644278
 
 def feedback(update: Update, context: CallbackContext):
     statement = select(Group)

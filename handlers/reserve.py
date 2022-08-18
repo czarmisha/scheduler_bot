@@ -259,7 +259,7 @@ def description(update: Update, context: CallbackContext):
                              f"{messages['start']['uz']}: {validator.start}\n"
                              f"{messages['end']['uz']}: {validator.end}\n"
                              f"{messages['description']['uz']}: {validator.description}\n"
-                             f"{messages['author']['uz']}: {author})"
+                             f"{messages['author']['uz']}: {author}"
                              )
     return ConversationHandler.END
 
