@@ -1,5 +1,6 @@
 import logging
 import datetime
+from tokenize import group
 
 from telegram import (
     Update,
@@ -71,6 +72,21 @@ def sel_event(update: Update, context: CallbackContext):
 def del_event(update: Update, context: CallbackContext):
     query = update.callback_query
     query.answer()
+    group = EventValidator().get_group()
+    author = f"@{update.effective_user.username}" if update.effective_user.username else f"{update.effective_user.first_name}" 
+    if group[0]:
+        context.bot.send_message(chat_id=group[1].tg_id,
+                                text=f"🗑 {messages['del_alert']['ru']}: \n\n"
+                                f"{messages['start']['ru']}: {context.user_data['event'].start}\n"
+                                f"{messages['end']['ru']}: {context.user_data['event'].end}\n"
+                                f"{messages['description']['ru']}: {context.user_data['event'].description}\n"
+                                f"{messages['author']['ru']}: {author}"
+                                f"\n\n🗑 {messages['del_alert']['uz']}: \n\n"
+                                f"{messages['start']['uz']}: {context.user_data['event'].start}\n"
+                                f"{messages['end']['uz']}: {context.user_data['event'].end}\n"
+                                f"{messages['description']['uz']}: {context.user_data['event'].description}\n"
+                                f"{messages['author']['uz']}: {author}"
+                                )
     local_session.delete(context.user_data["event"])
     local_session.commit()
     context.bot.send_message(context.user_data['chat_id'], f"🗑 {messages['event_is_deleted']['ru']}\n\t\t{messages['event_is_deleted']['uz']}\n\n📝 /reserve \n🖥 /display \n🗃 /my_events\n🗣 /feedback")
@@ -255,6 +271,7 @@ def description(update: Update, context: CallbackContext):
     
     context.user_data["event_start"] = datetime.datetime.strptime(context.user_data["event_date"] + ' ' + context.user_data["event_start"], '%d.%m.%Y %H:%M')
     context.user_data["event_end"] = datetime.datetime.strptime(context.user_data["event_date"] + ' ' + context.user_data["event_end"], '%d.%m.%Y %H:%M')
+    # context.user_data["event_before_editing"] = context.user_data["event"].copy()
 
     validator = EventValidator(context.user_data["event_start"], context.user_data["event_end"], update.message.text)
     success, mess = validator.duration_validation()
@@ -288,13 +305,29 @@ def description(update: Update, context: CallbackContext):
                 get_time_keyboard(str_h, str_min, '🕒start'))
         )
         return START
-
+    desc_before = context.user_data["event"].description
+    start_before = context.user_data["event"].start
+    end_before = context.user_data["event"].end
     if update.effective_message.text:
         context.user_data["event"].description = update.effective_message.text
     context.user_data["event"].start = context.user_data["event_start"]
     context.user_data["event"].end = context.user_data["event_end"]
     local_session.commit()
     update.message.reply_text(f"✏️✅ {messages['event_is_edited']['ru']}\n\t\t{messages['event_is_edited']['uz']}\n\n📝 /reserve \n🖥 /display \n🗃 /my_events\n🗣 /feedback")
+    author = f"@{update.effective_user.username}" if update.effective_user.username else f"{update.effective_user.first_name}" 
+    group = validator.get_group()
+    context.bot.send_message(chat_id=group[1].tg_id,
+                            text=f"✏️ {messages['edit_alert']['ru']}: \n\n"
+                            f"{messages['start']['ru']}: {start_before} => {context.user_data['event'].start}\n"
+                            f"{messages['end']['ru']}: {end_before} => {context.user_data['event'].end}\n"
+                            f"{messages['description']['ru']}: {desc_before} => {context.user_data['event'].description}\n"
+                            f"{messages['author']['ru']}: {author}"
+                            f"\n\n✏️ {messages['edit_alert']['uz']}: \n\n"
+                            f"{messages['start']['uz']}: {start_before} => {context.user_data['event'].start}\n"
+                            f"{messages['end']['uz']}: {end_before} => {context.user_data['event'].end}\n"
+                            f"{messages['description']['uz']}: {desc_before} => {context.user_data['event'].description}\n"
+                            f"{messages['author']['uz']}: {author}"
+                            )
     return ConversationHandler.END
 
 
