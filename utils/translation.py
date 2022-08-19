@@ -168,6 +168,7 @@ messages = {
               'Команда /my_events, чтобы отобразить ваш список мероприятий\n'
               'Команда /display, чтобы отобразить список брони.\n\n'
               'Команда /feedback для обратной связи с админом.\n\n'
+              'Команда /help, чтобы получить документацию.\n\n'
               'по вопросам и предложениям - @m_dergachyov',
         'uz': '\nMeni Uzinfocomning tadbirlari rejalashtiruvchisi deb atashadi.\n'
               'Mana men nimalar qila olaman:\n\n'
@@ -175,6 +176,7 @@ messages = {
               '/my_events buyrug\'i orqali o\'zingiz rejalashtirilgan tadbirlarni ko\'rishingiz mumkin\n'
               '/display buyrug\'i orqali barcha rejalashtirilgan tadbirlar ro\'yxatini ko\'rishingiz mumkin\n\n'
               '/feedback translate\n\n'
+              '/help translate\n\n'
               'Savol va takliflar bo\'yicha  - @m_dergachyov'
     },
     'confirm': {
