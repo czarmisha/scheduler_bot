@@ -175,8 +175,8 @@ messages = {
               '/reserve buyrug\'i orqali zalda tadbir rejalashtirish mumkin\n'
               '/my_events buyrug\'i orqali o\'zingiz rejalashtirilgan tadbirlarni ko\'rishingiz mumkin\n'
               '/display buyrug\'i orqali barcha rejalashtirilgan tadbirlar ro\'yxatini ko\'rishingiz mumkin\n\n'
-              '/feedback translate\n\n'
-              '/help translate\n\n'
+              '/feedback Murojaat yuborish\n\n'
+              '/help Yordam\n\n'
               'Savol va takliflar bo\'yicha  - @m_dergachyov'
     },
     'confirm': {
@@ -205,22 +205,22 @@ messages = {
     },
     'display_group':{
         'ru': 'Также доступны другие периоды времени в личных сообщениях по команде /display',
-        'uz': 'translate '
+        'uz': 'Bundan tashqari boshqa vaqt oralig\'i uchun rejalashtirilgan tadbirlarni botga /display komandasini yuborib olishingiz mumkin '
     },
     'feedback_title':{
         'ru': 'Введите текст обратной связи\nЭто может быть предложение или жалоба и тд\n',
-        'uz': 'translate\n'
+        'uz': 'Murojaat matninit yozing. Bu matn taklif, shikoyat yoki xatolik haqidagi ma\'lumotlar bo\'lishi mumkin\n'
     },
     'feedback_complete':{
         'ru': 'Ваша обратная связь отправлена админу\n',
-        'uz': 'translate \n'
+        'uz': 'Xabaringiz ma\'muriyatga yuborildi \n'
     },
     'del_alert':{
         'ru': 'Событие было удалено:',
-        'uz': 'translate '
+        'uz': 'Tadbir bekor qilindi'
     },
     'edit_alert':{
         'ru': 'Событие было измененно. Проверьте список броней командой /display',
-        'uz': 'translate '
+        'uz': 'Tadbirga o\'zgartirish kiritildi. /display komandasi orqali bronlar ro\'yxatini ko\'rishingiz mumkin'
     },
 }
