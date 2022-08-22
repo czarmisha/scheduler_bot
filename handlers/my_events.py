@@ -16,8 +16,7 @@ from telegram.ext import (
     Filters,
 )
 from sqlalchemy import select
-
-from db.models import Event, Session, engine
+from db.models import Group, Event, Session, engine
 from .keyboards import get_date_keyboard, get_time_keyboard
 from validators.eventValidator import EventValidator
 from utils.translation import messages
@@ -38,6 +37,13 @@ def my_events(update: Update, context: CallbackContext):
     if not update.message.chat.type == 'private':
         update.message.reply_text(f"{messages['private_error']['ru']} \n\n {messages['private_error']['uz']}")
         return 
+    statement = select(Group)
+    group = local_session.execute(statement).scalars().first()
+    author = context.bot.get_chat_member(group.tg_id, update.effective_user.id)
+    if author.status == 'left' or author.status == 'kicked' or not author.status:
+        context.bot.send_message(chat_id=update.effective_chat.id,
+                                 text=f"{messages['auth_err']['ru']} / {messages['auth_err']['uz']}")
+        return ConversationHandler.END
     context.user_data["chat_id"] = update.effective_chat.id
     statement = select(Event).filter(Event.author_id==update.effective_user.id)
     #try?

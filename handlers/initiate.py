@@ -39,6 +39,6 @@ def initiate_group(update: Update, context: CallbackContext):
         context.bot.send_message(chat_id=update.effective_chat.id,
                              text=f'Bot is ready to work')
     else:
-        context.bot.send_message(chat_id=update.effective_chat.id, text="Calendar for this group is already exist")
+        context.bot.send_message(chat_id=update.effective_chat.id, text="Calendar is already exist")
 
 initiate_handler = ChatMemberHandler(initiate_group)
