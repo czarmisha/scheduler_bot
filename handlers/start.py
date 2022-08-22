@@ -11,13 +11,14 @@ def start(update: Update, context: CallbackContext):
     if not update.message.chat.type == 'private':
         update.message.reply_text(f"{messages['private_error']['ru']} \n\n {messages['private_error']['uz']}")
         return 
-    statement = select(Group)
-    group = local_session.execute(statement).scalars().first()
-    author = context.bot.get_chat_member(group.tg_id, update.effective_user.id)
-    if author.status == 'left' or author.status == 'kicked' or not author.status:
-        context.bot.send_message(chat_id=update.effective_chat.id,
-                                 text=f"{messages['auth_err']['ru']} / {messages['auth_err']['uz']}")
     else:
+        statement = select(Group)
+        group = local_session.execute(statement).scalars().first()
+        author = context.bot.get_chat_member(group.tg_id, update.effective_user.id)
+        if author.status == 'left' or author.status == 'kicked' or not author.status:
+            context.bot.send_message(chat_id=update.effective_chat.id,
+                                    text=f"{messages['auth_err']['ru']} / {messages['auth_err']['uz']}")
+            return
         reply_keyboard = [['/reserve', '/display'], ['/my_events', '/feedback']]
         markup_key = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True, resize_keyboard=True)
 
