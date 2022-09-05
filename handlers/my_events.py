@@ -1,5 +1,6 @@
 import logging
 import datetime
+from shutil import ExecError
 from tokenize import group
 
 from telegram import (
@@ -38,7 +39,11 @@ def my_events(update: Update, context: CallbackContext):
         update.message.reply_text(f"{messages['private_error']['ru']} \n\n {messages['private_error']['uz']}")
         return 
     statement = select(Group)
-    group = local_session.execute(statement).scalars().first()
+    try:
+        group = local_session.execute(statement).scalars().first()
+    except Exception as e: # catch a special case
+        print("!!!!!!!!!!!!!************", e)
+        return
     author = context.bot.get_chat_member(group.tg_id, update.effective_user.id)
     if author.status == 'left' or author.status == 'kicked' or not author.status:
         context.bot.send_message(chat_id=update.effective_chat.id,
@@ -46,8 +51,13 @@ def my_events(update: Update, context: CallbackContext):
         return ConversationHandler.END
     context.user_data["chat_id"] = update.effective_chat.id
     statement = select(Event).filter(Event.author_id==update.effective_user.id)
-    #try?
-    context.user_data["events"] = local_session.execute(statement).scalars().all()
+    try:
+        context.user_data["events"] = local_session.execute(statement).scalars().all()
+    except ExecError as e: # catch a special case
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ERROR! NO EVENTS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        print(e)
+        update.message.reply_text(f"🗃 {messages['active_events']['ru']} / {messages['active_events']['uz']}")
+        return 
     if context.user_data["events"]:
         keyboard = [
             [InlineKeyboardButton(f'{event.description}', callback_data=f"my_event_{ind}")] for ind, event in enumerate(context.user_data["events"])
@@ -58,7 +68,8 @@ def my_events(update: Update, context: CallbackContext):
         return 
     else:
         update.message.reply_text(f"🗃 {messages['active_events']['ru']} / {messages['active_events']['uz']}")
-        return 
+        return
+        
 
 def sel_event(update: Update, context: CallbackContext):
     query = update.callback_query
