@@ -14,7 +14,7 @@ from telegram.ext import (
 from sqlalchemy import select, and_
 
 from utils.translation import messages
-from db.models import Event, Session, engine
+from db.models import Group, Event, Session, engine
 
 local_session = Session(bind=engine)
 
@@ -48,6 +48,14 @@ def display(update: Update, context: CallbackContext):
         update.message.reply_text(text) 
         return
 
+    statement = select(Group)
+    group = local_session.execute(statement).scalars().first()
+    author = context.bot.get_chat_member(group.tg_id, update.effective_user.id)
+    if author.status == 'left' or author.status == 'kicked' or not author.status:
+        context.bot.send_message(chat_id=update.effective_chat.id,
+                                 text=f"{messages['auth_err']['ru']} / {messages['auth_err']['uz']}")
+        return
+    
     context.user_data['chat_id'] = update.effective_chat.id
     keyboard = [
         [InlineKeyboardButton(f"{messages['display_today']['ru']} / {messages['display_today']['uz']}", callback_data="display_1")],
