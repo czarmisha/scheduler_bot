@@ -36,16 +36,28 @@ TZ = datetime.timezone(datetime.timedelta(hours=5), 'Uzbekistan/UTC+5')
 # Четверг
 # Пятница
 
+def send_timetable():
+    today = datetime.datetime.now(TZ)
+    start = today.replace(hour=0, minute=0, second=0, microsecond=0) - \
+        datetime.timedelta(days=today.isoweekday() - 1)
+    end = today.replace(hour=23, minute=59, second=59) + \
+        datetime.timedelta(days=5 - today.isoweekday())
+    text = create_text(get_events(start,end), 3, f"📖 {messages['display_this_week']['ru']} / {messages['display_this_week']['uz']}\n")
+    text += f"\n\n{messages['display_group']['ru']}\n{messages['display_group']['uz']}"
+    return text
+
 def display(update: Update, context: CallbackContext):
     if not update.message.chat.type == 'private':
-        today = datetime.datetime.now(TZ)
-        start = today.replace(hour=0, minute=0, second=0, microsecond=0) - \
-            datetime.timedelta(days=today.isoweekday() - 1)
-        end = today.replace(hour=23, minute=59, second=59) + \
-            datetime.timedelta(days=5 - today.isoweekday())
-        text = create_text(get_events(start,end), 3, f"📖 {messages['display_this_week']['ru']} / {messages['display_this_week']['uz']}\n")
-        text += f"\n\n{messages['display_group']['ru']}\n{messages['display_group']['uz']}"
-        update.message.reply_text(text) 
+        if not 'last_call' in context.chat_data:
+            context.chat_data['last_call'] = datetime.datetime.now()
+            text = send_timetable()
+            update.message.reply_text(text) 
+
+        if datetime.datetime.now() - datetime.timedelta(seconds=5) > context.chat_data['last_call']:
+            context.chat_data['last_call'] = datetime.datetime.now()
+            text = send_timetable()
+            update.message.reply_text(text) 
+
         return
 
     statement = select(Group)
