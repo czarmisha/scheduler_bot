@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
-from sqlalchemy import create_engine, Column, Integer, SmallInteger, String, DateTime, Boolean, ForeignKey
+from sqlalchemy import create_engine, Column, Integer, SmallInteger, String, DateTime, Boolean, ForeignKey, BigInteger
 
 _BASE_DIR = Path(__file__).resolve().parent.parent
 dotenv_path = os.path.join(_BASE_DIR, '.env')
@@ -28,7 +28,7 @@ class Group(Base):
     __tablename__ = 'group'
 
     id = Column(SmallInteger, primary_key=True)
-    tg_id = Column(Integer, nullable=False)  # tg group id
+    tg_id = Column(BigInteger, nullable=False)  # tg group id
     name = Column(String(50), nullable=False)
     calendar = relationship("Calendar", back_populates="group", uselist=False)
 
