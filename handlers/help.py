@@ -9,7 +9,7 @@ local_session = Session(bind=engine)
 
 def help(update: Update, context: CallbackContext):
     if not update.message.chat.type == 'private':
-        update.message.reply_text(f"{messages['private_error']['ru']} \n\n {messages['private_error']['uz']}")
+        # update.message.reply_text(f"{messages['private_error']['ru']} \n\n {messages['private_error']['uz']}")
         return 
     statement = select(Group)
     group = local_session.execute(statement).scalars().first()
