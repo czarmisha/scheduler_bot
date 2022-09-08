@@ -48,16 +48,14 @@ def send_timetable():
 
 def display(update: Update, context: CallbackContext):
     if not update.message.chat.type == 'private':
-        if not 'last_call' in context.chat_data:
-            context.chat_data['last_call'] = datetime.datetime.now()
-            text = send_timetable()
-            update.message.reply_text(text) 
-
-        if datetime.datetime.now() - datetime.timedelta(seconds=5) > context.chat_data['last_call']:
-            context.chat_data['last_call'] = datetime.datetime.now()
-            text = send_timetable()
-            update.message.reply_text(text) 
-
+        # if not 'last_call' in context.chat_data:
+        #     context.chat_data['last_call'] = datetime.datetime.now()
+        #     text = send_timetable()
+        #     update.message.reply_text(text) 
+        # if datetime.datetime.now() - datetime.timedelta(seconds=5) > context.chat_data['last_call']:
+        #     context.chat_data['last_call'] = datetime.datetime.now()
+        #     text = send_timetable()
+        #     update.message.reply_text(text) 
         return
 
     statement = select(Group)

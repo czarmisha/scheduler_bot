@@ -31,7 +31,7 @@ TZ = datetime.timezone(datetime.timedelta(hours=5), 'Uzbekistan/UTC+5')
 
 def reserve(update: Update, context: CallbackContext):
     if not update.message.chat.type == 'private':
-        update.message.reply_text(f"{messages['private_error']['ru']} \n\n {messages['private_error']['uz']}")
+        # update.message.reply_text(f"{messages['private_error']['ru']} \n\n {messages['private_error']['uz']}")
         return ConversationHandler.END
     statement = select(Group)
     group = local_session.execute(statement).scalars().first()
