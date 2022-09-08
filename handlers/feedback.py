@@ -21,6 +21,9 @@ BODY = range(1)
 _ADMIN_ID=4644278
 
 def feedback(update: Update, context: CallbackContext):
+    if not update.message.chat.type == 'private':
+        # update.message.reply_text(f"{messages['private_error']['ru']} \n\n {messages['private_error']['uz']}")
+        return ConversationHandler.END
     statement = select(Group)
     group = local_session.execute(statement).scalars().first()
     author = context.bot.get_chat_member(group.tg_id, update.effective_user.id)
