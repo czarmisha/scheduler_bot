@@ -107,7 +107,7 @@ def date(update: Update, context: CallbackContext):
             chat_id=context.user_data['chat_id'], text='❗️Дата не может быть в прошлом. Ну вот, все по новой теперь..\n\n 📝 /reserve')
         return ConversationHandler.END
 
-    context.user_data['hour'] = datetime.datetime.now(TZ).hour if datetime.datetime.now(TZ).hour < 20 or datetime.datetime.now(TZ).hour > 8 else 8
+    context.user_data['hour'] = datetime.datetime.now(TZ).hour if datetime.datetime.now(TZ).hour < 18 or datetime.datetime.now(TZ).hour > 9 else 9
     context.user_data['minute'] = datetime.datetime.now(TZ).minute
 
     str_min = f"0{context.user_data['minute']}" if context.user_data['minute'] < 10 else context.user_data['minute']
@@ -128,8 +128,8 @@ def increase_time(update: Update, context: CallbackContext):
     query.answer()
 
     if query.data.startswith('inc_hour'):
-        if context.user_data['hour'] >= 20:
-            context.user_data['hour'] = 8
+        if context.user_data['hour'] >= 18:
+            context.user_data['hour'] = 9
         else:
             context.user_data['hour'] += 1
     elif query.data.startswith('inc_minute'):
@@ -161,8 +161,8 @@ def decrease_time(update: Update, context: CallbackContext):
     query.answer()
 
     if query.data.startswith('dec_hour'):
-        if context.user_data['hour'] <= 8:
-            context.user_data['hour'] = 20
+        if context.user_data['hour'] <= 9:
+            context.user_data['hour'] = 18
         else:
             context.user_data['hour'] -= 1
     elif query.data.startswith('dec_minute'):
