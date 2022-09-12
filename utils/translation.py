@@ -216,7 +216,7 @@ messages = {
         'uz': 'Xabaringiz ma\'muriyatga yuborildi \n'
     },
     'del_alert':{
-        'ru': 'Событие было удалено:',
+        'ru': 'Событие было удалено',
         'uz': 'Tadbir bekor qilindi'
     },
     'edit_alert':{

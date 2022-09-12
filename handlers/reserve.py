@@ -129,7 +129,7 @@ def increase_time(update: Update, context: CallbackContext):
 
     if query.data.startswith('inc_hour'):
         if context.user_data['hour'] >= 18:
-            context.user_data['hour'] = 9
+            context.user_data['hour'] = 9 
         else:
             context.user_data['hour'] += 1
     elif query.data.startswith('inc_minute'):
