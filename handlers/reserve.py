@@ -260,15 +260,11 @@ def description(update: Update, context: CallbackContext):
     update.message.reply_text(f"{messages['event_is_created']['ru']} / {messages['event_is_created']['uz']} \n\n📝 /reserve \n🖥 /display \n🗃 /my_events\n🗣 /feedback")
     author = f"@{update.effective_user.username}" if update.effective_user.username else f"{update.effective_user.first_name}"
     context.bot.send_message(chat_id=validator.group.tg_id,
-                             text=f"{messages['new_event']['ru']}: \n\n"
-                             f"{messages['start']['ru']}: {validator.start}\n"
-                             f"{messages['end']['ru']}: {validator.end}\n"
-                             f"{messages['description']['ru']}: {validator.description}\n"
+                             text=f"{messages['new_event']['ru']}: \n"
+                             f"{messages['date']['ru']}: {validator.start.strftime('%d %b %H:%M')}-{validator.end.strftime('%H:%M')}\n"
                              f"{messages['author']['ru']}: {author}"
-                             f"\n\n{messages['new_event']['uz']}: \n\n"
-                             f"{messages['start']['uz']}: {validator.start}\n"
-                             f"{messages['end']['uz']}: {validator.end}\n"
-                             f"{messages['description']['uz']}: {validator.description}\n"
+                             f"\n\n{messages['new_event']['uz']}: \n"
+                             f"{messages['date']['uz']}: {validator.start.strftime('%d %b %H:%M')}-{validator.end.strftime('%H:%M')}\n"
                              f"{messages['author']['uz']}: {author}"
                              )
     return ConversationHandler.END

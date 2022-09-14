@@ -220,7 +220,11 @@ messages = {
         'uz': 'Tadbir bekor qilindi'
     },
     'edit_alert':{
-        'ru': 'Событие было измененно. Проверьте список броней командой /display',
-        'uz': 'Tadbirga o\'zgartirish kiritildi. /display komandasi orqali bronlar ro\'yxatini ko\'rishingiz mumkin'
+        'ru': 'Событие было измененно',
+        'uz': 'Tadbirga o\'zgartirish kiritildi'
+    },
+    'date':{
+        'ru': 'Дата',
+        'uz': 'Sana'
     },
 }

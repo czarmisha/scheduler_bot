@@ -1,7 +1,5 @@
 import logging
 import datetime
-from shutil import ExecError
-from tokenize import group
 
 from telegram import (
     Update,
@@ -50,10 +48,10 @@ def my_events(update: Update, context: CallbackContext):
                                  text=f"{messages['auth_err']['ru']} / {messages['auth_err']['uz']}")
         return ConversationHandler.END
     context.user_data["chat_id"] = update.effective_chat.id
-    statement = select(Event).filter(Event.author_id==update.effective_user.id)
+    statement = select(Event).filter(Event.author_id==update.effective_user.id, Event.start>datetime.datetime.now()-datetime.timedelta(days=5))
     try:
         context.user_data["events"] = local_session.execute(statement).scalars().all()
-    except ExecError as e: # catch a special case
+    except Exception as e: # catch a special case
         print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ERROR! NO EVENTS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         print(e)
         update.message.reply_text(f"🗃 {messages['active_events']['ru']} / {messages['active_events']['uz']}")
@@ -76,8 +74,8 @@ def sel_event(update: Update, context: CallbackContext):
     query.answer()
     context.user_data["event"] = context.user_data['events'][int(query.data[query.data.rfind('_')+1:])]
     query.edit_message_text(
-        text=f"✅ {messages['your_select']['ru']}:\n{messages['start']['ru']} {context.user_data['event'].start}\n{messages['end']['ru']} {context.user_data['event'].end}\n{messages['description']['ru']} {context.user_data['event'].description}\n\n{messages['select_action']['ru']}\n\n"\
-            f"✅ {messages['your_select']['uz']}:\n{messages['start']['uz']} {context.user_data['event'].start}\n{messages['end']['uz']} {context.user_data['event'].end}\n{messages['description']['uz']} {context.user_data['event'].description}\n\n{messages['select_action']['uz']}",
+        text=f"✅ {messages['your_select']['ru']}:\n{messages['date']['ru']}: {context.user_data['event'].start.strftime('%d %b %H:%M')}-{context.user_data['event'].end.strftime('%H:%M')}\n{messages['description']['ru']}: {context.user_data['event'].description}\n\n"\
+            f"✅ {messages['your_select']['uz']}:\n{messages['date']['uz']}: {context.user_data['event'].start.strftime('%d %b %H:%M')}-{context.user_data['event'].end.strftime('%H:%M')}\n{messages['description']['uz']}: {context.user_data['event'].description}\n\n{messages['select_action']['ru']}:\n{messages['select_action']['uz']}:\n\n",
         reply_markup=InlineKeyboardMarkup(
             [
                 [InlineKeyboardButton(f"✏️ {messages['edit']['ru']} / {messages['edit']['uz']}", callback_data=f'edit_event')],
@@ -93,15 +91,11 @@ def del_event(update: Update, context: CallbackContext):
     author = f"@{update.effective_user.username}" if update.effective_user.username else f"{update.effective_user.first_name}" 
     if group[0]:
         context.bot.send_message(chat_id=group[1].tg_id,
-                                text=f"🗑 {messages['del_alert']['ru']}: \n\n"
-                                f"{messages['start']['ru']}: {context.user_data['event'].start}\n"
-                                f"{messages['end']['ru']}: {context.user_data['event'].end}\n"
-                                f"{messages['description']['ru']}: {context.user_data['event'].description}\n"
+                                text=f"🗑 {messages['del_alert']['ru']}: \n"
+                                f"{messages['date']['ru']}: {context.user_data['event'].start.strftime('%d %b %H:%M')}-{context.user_data['event'].end.strftime('%H:%M')}\n"
                                 f"{messages['author']['ru']}: {author}"
-                                f"\n\n🗑 {messages['del_alert']['uz']}: \n\n"
-                                f"{messages['start']['uz']}: {context.user_data['event'].start}\n"
-                                f"{messages['end']['uz']}: {context.user_data['event'].end}\n"
-                                f"{messages['description']['uz']}: {context.user_data['event'].description}\n"
+                                f"\n\n🗑 {messages['del_alert']['uz']}: \n"
+                                f"{messages['date']['uz']}: {context.user_data['event'].start.strftime('%d %b %H:%M')}-{context.user_data['event'].end.strftime('%H:%M')}\n"
                                 f"{messages['author']['uz']}: {author}"
                                 )
     local_session.delete(context.user_data["event"])
@@ -334,15 +328,11 @@ def description(update: Update, context: CallbackContext):
     author = f"@{update.effective_user.username}" if update.effective_user.username else f"{update.effective_user.first_name}" 
     group = validator.get_group()
     context.bot.send_message(chat_id=group[1].tg_id,
-                            text=f"✏️ {messages['edit_alert']['ru']}: \n\n"
-                            f"{messages['start']['ru']}: {start_before} => {context.user_data['event'].start}\n"
-                            f"{messages['end']['ru']}: {end_before} => {context.user_data['event'].end}\n"
-                            f"{messages['description']['ru']}: {desc_before} => {context.user_data['event'].description}\n"
+                            text=f"✏️ {messages['edit_alert']['ru']}: \n"
+                            f"{messages['date']['ru']}: {start_before.strftime('%d %b %H:%M')}-{end_before.strftime('%H:%M')} ➡️ {context.user_data['event'].start.strftime('%d %b %H:%M')}-{context.user_data['event'].end.strftime('%H:%M')}\n"
                             f"{messages['author']['ru']}: {author}"
-                            f"\n\n✏️ {messages['edit_alert']['uz']}: \n\n"
-                            f"{messages['start']['uz']}: {start_before} => {context.user_data['event'].start}\n"
-                            f"{messages['end']['uz']}: {end_before} => {context.user_data['event'].end}\n"
-                            f"{messages['description']['uz']}: {desc_before} => {context.user_data['event'].description}\n"
+                            f"\n\n✏️ {messages['edit_alert']['uz']}: \n"
+                            f"{messages['date']['uz']}: {start_before.strftime('%d %b %H:%M')}-{end_before.strftime('%H:%M')} ➡️ {context.user_data['event'].start.strftime('%d %b %H:%M')}-{context.user_data['event'].end.strftime('%H:%M')}\n"
                             f"{messages['author']['uz']}: {author}"
                             )
     return ConversationHandler.END

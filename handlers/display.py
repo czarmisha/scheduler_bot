@@ -25,17 +25,6 @@ logger = logging.getLogger(__name__)
 
 TZ = datetime.timezone(datetime.timedelta(hours=5), 'Uzbekistan/UTC+5')
 
-# TODO: do refactor
-# TODO use pandas to create table and import to jpg with pillow and send to user
-# https://datatofish.com/create-pandas-dataframe/
-# https://pypi.org/project/dataframe-image/
-# День            Начало    Конец    Описание
-# Понедельник     9:00      11:00     Собрание
-# Вторник
-# Среда
-# Четверг
-# Пятница
-
 def send_timetable():
     today = datetime.datetime.now(TZ)
     start = today.replace(hour=0, minute=0, second=0, microsecond=0) - \
