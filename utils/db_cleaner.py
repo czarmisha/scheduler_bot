@@ -12,7 +12,6 @@ from db.models import Event, Session, engine
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 filename = os.path.join(dir_path, 'db_cleaner.log')
-print(dir_path, filename)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -36,11 +35,11 @@ def clear_db():
     overdue_events = local_session.query(Event).filter(Event.end < today)
     if overdue_events:
         for event in overdue_events:    
-            logger.info(f'deleting {event}')
-            local_session.delete(event)
+            logger.info(f'arhiving {event}')
+            event.is_archive = True
             local_session.commit()
     else:
-        logger.info('no events to delete')
+        logger.info('no events to archive')
 
 if __name__ == '__main__':
     clear_db()

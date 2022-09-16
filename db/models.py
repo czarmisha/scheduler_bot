@@ -1,3 +1,4 @@
+from email.policy import default
 import os
 from pathlib import Path
 from dotenv import load_dotenv
@@ -61,6 +62,7 @@ class Event(Base):
     author_id = Column(Integer, nullable=False)
     author_firstname = Column(String(255), nullable=False)
     author_username = Column(String(255), nullable=True)
+    is_archive = Column(Boolean, default=False, nullable=True)
 
     def __repr__(self):
         return f'<Event - start: {self.start}, end: {self.end}>'

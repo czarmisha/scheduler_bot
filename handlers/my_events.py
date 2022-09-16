@@ -14,7 +14,7 @@ from telegram.ext import (
     MessageHandler,
     Filters,
 )
-from sqlalchemy import select
+from sqlalchemy import select, or_
 from db.models import Group, Event, Session, engine
 from .keyboards import get_date_keyboard, get_time_keyboard
 from validators.eventValidator import EventValidator
@@ -48,7 +48,7 @@ def my_events(update: Update, context: CallbackContext):
                                  text=f"{messages['auth_err']['ru']} / {messages['auth_err']['uz']}")
         return ConversationHandler.END
     context.user_data["chat_id"] = update.effective_chat.id
-    statement = select(Event).filter(Event.author_id==update.effective_user.id, Event.start>datetime.datetime.now()-datetime.timedelta(days=5))
+    statement = select(Event).filter(Event.author_id==update.effective_user.id, or_(Event.is_archive==False, Event.is_archive==None))
     try:
         context.user_data["events"] = local_session.execute(statement).scalars().all()
     except Exception as e: # catch a special case
