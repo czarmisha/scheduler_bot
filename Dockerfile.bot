@@ -6,6 +6,9 @@ WORKDIR /app
 
 RUN pip install -r requirements.txt
 
+COPY ./cron_job /etc/cron.daily/
+RUN chmod +x /etc/cron.daily/cron_job
+
 ENV PYTHONDONTWRITEBYTECODE=True
 
 CMD ["python", "main.py"]
