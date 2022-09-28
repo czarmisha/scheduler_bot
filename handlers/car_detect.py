@@ -1,11 +1,22 @@
 import os, requests, base64
+from pathlib import Path
 from datetime import datetime
 from telegram import Update
 from telegram.ext import CallbackContext, MessageHandler, Filters
 
 from sqlalchemy import select
+from dotenv import load_dotenv
+
 from db.models import Group, Session, engine
 from utils.translation import messages
+
+_BASE_DIR = Path(__file__).resolve().parent.parent
+dotenv_path = os.path.join(_BASE_DIR, '.env')
+if os.path.exists(dotenv_path):
+    load_dotenv(dotenv_path)
+
+_TOKEN = os.environ['PLATE_RECOGNITION_TOKEN']
+
 
 local_session = Session(bind=engine)
 
@@ -15,10 +26,11 @@ def get_plate_numbers(file_path):
             url = 'https://api.platerecognizer.com/v1/plate-reader/'
             data={
                 'regions': 'uz',
-                'upload': img_b64
+                'upload': img_b64,
+                "detection_rule": "strict",
             }
             headers = {
-                "Authorization": "Token dc4b9b659547e7155264e7dfd0e8dcb6974e7a88"
+                "Authorization": f"Token {_TOKEN}"
             }
             response = requests.post(url=url, headers=headers, data=data)
             if response.ok:

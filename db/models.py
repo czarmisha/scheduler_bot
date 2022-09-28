@@ -1,4 +1,3 @@
-from email.policy import default
 import os
 from pathlib import Path
 from dotenv import load_dotenv
@@ -10,12 +9,12 @@ dotenv_path = os.path.join(_BASE_DIR, '.env')
 if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)
 
-db_host = os.environ['POSTGRES_HOST']
-db_username = os.environ['POSTGRES_USERNAME']
-db_password = os.environ['POSTGRES_PASSWORD']
-db_name = os.environ['POSTGRES_DB']
+_db_host = os.environ['POSTGRES_HOST']
+_db_username = os.environ['POSTGRES_USERNAME']
+_db_password = os.environ['POSTGRES_PASSWORD']
+_db_name = os.environ['POSTGRES_DB']
 engine = create_engine(
-    f'postgresql://{db_username}:{db_password}@{db_host}:5432/{db_name}', echo=True)
+    f'postgresql://{_db_username}:{_db_password}@{_db_host}:5432/{_db_name}', echo=True)
 
 # Heroku
 # DATABASE_URL = os.environ['DATABASE_URL']
