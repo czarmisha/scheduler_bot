@@ -65,3 +65,16 @@ class Event(Base):
 
     def __repr__(self):
         return f'<Event - start: {self.start}, end: {self.end}>'
+
+
+class Car(Base):
+    __tablename__ = 'car'
+
+    id = Column(SmallInteger, primary_key=True)
+    model = Column(String(55), nullable=False)
+    plate = Column(String(8), nullable=False)
+    owner_phone = Column(String(13), nullable=False)
+    owner_name = Column(String(60), nullable=True)
+
+    def __repr__(self):
+        return f'<Car: plate - {self.plate}>'
