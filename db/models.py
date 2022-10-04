@@ -72,7 +72,7 @@ class Car(Base):
 
     id = Column(SmallInteger, primary_key=True)
     model = Column(String(55), nullable=False)
-    plate = Column(String(8), nullable=False)
+    plate = Column(String(10), nullable=False)
     owner_phone = Column(String(13), nullable=False)
     owner_name = Column(String(60), nullable=True)
 
