@@ -1,3 +1,4 @@
+from email import charset
 import os, requests, base64
 from pathlib import Path
 from datetime import datetime
@@ -57,9 +58,15 @@ def car_detect(update: Update, context: CallbackContext):
 
         plate_nums = get_plate_numbers(file_path)
         if not plate_nums[0]:
-            return
+            return #ignore if does not recognize plate on image
         for num in plate_nums[1]:
             update.message.reply_text(f"Номер машины с фото: {num['plate']}\nБазы дынных пока нет")
+            # statement = select(Car).filter(Car.plate_num=num['plate'])
+            # car = local_session.execute(statement).scalars().first()
+            # if car:
+            #     send data to chat
+            #     break
+
         
         os.remove(file_path)
 
