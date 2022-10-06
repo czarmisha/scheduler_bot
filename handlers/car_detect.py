@@ -5,10 +5,10 @@ from datetime import datetime
 from telegram import Update
 from telegram.ext import CallbackContext, MessageHandler, Filters
 
-from sqlalchemy import select
+from sqlalchemy import select, func
 from dotenv import load_dotenv
 
-from db.models import Group, Session, engine
+from db.models import Group, Car, Session, engine
 from utils.translation import messages
 
 _BASE_DIR = Path(__file__).resolve().parent.parent
@@ -59,15 +59,17 @@ def car_detect(update: Update, context: CallbackContext):
         plate_nums = get_plate_numbers(file_path)
         if not plate_nums[0]:
             return #ignore if does not recognize plate on image
+        # local_session.execute('CREATE EXTENSION pg_trgm;')
+        # SET pg_trgm.similarity_threshold = 0.7;
         for num in plate_nums[1]:
-            update.message.reply_text(f"Номер машины с фото: {num['plate']}\nБазы дынных пока нет")
-            # statement = select(Car).filter(Car.plate_num=num['plate'])
-            # car = local_session.execute(statement).scalars().first()
-            # if car:
-            #     send data to chat
-            #     break
+            statement = select(Car).filter(func.similarity(Car.plate, num['plate'].upper()) > 0.4)
+            # statement = select(Car).filter(Car.plate.op("%")(num['plate'].upper()))
+            car = local_session.execute(statement).scalars().first()
+            print(car)
+            if car:
+                update.message.reply_text(f"Это возможно наша машина:\nНомер машины: {car.plate}\nНомер владельца: {car.owner_phone}")
+                break
 
-        
-        os.remove(file_path)
+    os.remove(file_path)
 
 detect_handler = MessageHandler(Filters.photo, car_detect)

@@ -71,10 +71,10 @@ class Car(Base):
     __tablename__ = 'car'
 
     id = Column(SmallInteger, primary_key=True)
-    model = Column(String(55), nullable=False)
-    plate = Column(String(10), nullable=False)
-    owner_phone = Column(String(13), nullable=False)
-    owner_name = Column(String(60), nullable=True)
+    model = Column(String(70), nullable=False)
+    plate = Column(String(20), nullable=False)
+    owner_phone = Column(String(20), nullable=False)
+    owner_name = Column(String(70), nullable=True)
 
     def __repr__(self):
         return f'<Car: plate - {self.plate}>'
