@@ -70,7 +70,10 @@ def car_detect(update: Update, context: CallbackContext):
             car = local_session.execute(statement).scalars().first()
             if car:
                 logger.info('DONE')
-                update.message.reply_text(f"Это возможно наша машина:\nНомер машины: {car.plate}\nНомер владельца: {car.owner_phone}")
+                message_text = f"Это возможно наша машина:\nНомер машины: {car.plate}\nНомер владельца: {car.owner_phone}"
+                if hasattr(car, "owner_name"):
+                    message_text += f"\nИмя владельца: {car.owner_name}"
+                update.message.reply_text(message_text)
                 break
 
     os.remove(file_path)
