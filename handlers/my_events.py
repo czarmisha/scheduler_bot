@@ -180,7 +180,7 @@ def date(update: Update, context: CallbackContext):
     str_min = f'0{context.user_data["minute"]}' if context.user_data["minute"] < 10 else context.user_data["minute"]
     str_h = f'0{context.user_data["hour"]}' if context.user_data["hour"] < 10 else context.user_data["hour"]
     query.edit_message_text(
-        text=f"{messages['select_start_time']['ru']} / {messages['select_start_time']['uz']}",
+        text=f"🕒 {messages['select_start_time']['ru']} / {messages['select_start_time']['uz']}",
         reply_markup=InlineKeyboardMarkup(
             get_time_keyboard(str_h, str_min, '🕒start'))
     )
@@ -211,11 +211,11 @@ def increase_time(update: Update, context: CallbackContext):
 
     str_min = f'0{context.user_data["minute"]}' if context.user_data["minute"] < 10 else context.user_data["minute"]
     str_h = f'0{context.user_data["hour"]}' if context.user_data["hour"] < 10 else context.user_data["hour"]
-    txt = f"🕔 {messages['select_start_time']['ru']} / {messages['select_start_time']['uz']}" if query.data.endswith('start') else f"{messages['select_end_time']['ru']} / {messages['select_end_time']['uz']}"
+    txt = f"🕔 {messages['select_start_time']['ru']} / {messages['select_start_time']['uz']}" if query.data.endswith('start') else f"⏰ {messages['select_end_time']['ru']} / {messages['select_end_time']['uz']}"
     query.edit_message_text(
         text=txt,
         reply_markup=InlineKeyboardMarkup(get_time_keyboard(
-            str_h, str_min, 'start' if query.data.endswith('🕒start') else '⏰end'
+            str_h, str_min, '🕒start' if query.data.endswith('🕒start') else '⏰end'
         )
         )
     )
@@ -240,11 +240,11 @@ def decrease_time(update: Update, context: CallbackContext):
 
     str_min = f'0{context.user_data["minute"]}' if context.user_data["minute"] < 10 else context.user_data["minute"]
     str_h = f'0{context.user_data["hour"]}' if context.user_data["hour"] < 10 else context.user_data["hour"]
-    txt = f"🕔 {messages['select_start_time']['ru']} / {messages['select_start_time']['uz']}" if query.data.endswith('start') else f"{messages['select_end_time']['ru']} / {messages['select_end_time']['uz']}"
+    txt = f"🕔 {messages['select_start_time']['ru']} / {messages['select_start_time']['uz']}" if query.data.endswith('start') else f"⏰ {messages['select_end_time']['ru']} / {messages['select_end_time']['uz']}"
     query.edit_message_text(
         text=txt,
         reply_markup=InlineKeyboardMarkup(get_time_keyboard(
-            str_h, str_min, 'start' if query.data.endswith('🕒start') else '⏰end'
+            str_h, str_min, '🕒start' if query.data.endswith('🕒start') else '⏰end'
         )
         )
     )
@@ -260,7 +260,7 @@ def start(update: Update, context: CallbackContext):
     str_min = f'0{context.user_data["minute"]}' if context.user_data["minute"] < 10 else context.user_data["minute"]
     str_h = f'0{context.user_data["hour"]}' if context.user_data["hour"] < 10 else context.user_data["hour"]
     query.edit_message_text(
-        text=f"🕔 {messages['select_end_time']['ru']} / {messages['select_end_time']['uz']}",
+        text=f"⏰ {messages['select_end_time']['ru']} / {messages['select_end_time']['uz']}",
         reply_markup=InlineKeyboardMarkup(
             get_time_keyboard(str_h, str_min, '⏰end'))
     )
@@ -295,7 +295,7 @@ def description(update: Update, context: CallbackContext):
         str_min = f'0{minute}' if minute < 10 else minute
         str_h = f'0{hour}' if hour < 10 else hour
         update.message.reply_text(
-            text=f"{messages['select_start_time']['ru']} / {messages['select_start_time']['uz']}",
+            text=f"🕒 {messages['select_start_time']['ru']} / {messages['select_start_time']['uz']}",
             reply_markup=InlineKeyboardMarkup(
                 get_time_keyboard(str_h, str_min, '🕒start'))
         )
@@ -311,7 +311,7 @@ def description(update: Update, context: CallbackContext):
         str_min = f'0{minute}' if minute < 10 else minute
         str_h = f'0{hour}' if hour < 10 else hour
         update.message.reply_text(
-            text=f"{messages['select_start_time']['ru']} / {messages['select_start_time']['uz']}",
+            text=f"🕒 {messages['select_start_time']['ru']} / {messages['select_start_time']['uz']}",
             reply_markup=InlineKeyboardMarkup(
                 get_time_keyboard(str_h, str_min, '🕒start'))
         )

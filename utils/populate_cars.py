@@ -15,7 +15,8 @@ local_session = Session(bind=engine)
 with open('cars.csv', newline='') as file:
     filereader = csv.reader(file, delimiter=',', quotechar='|')
     for row in filereader:
-        car = Car(model=row[1].strip(), plate=row[2].strip(), owner_phone=row[3].strip())
+        print(row)
+        car = Car(model=row[1].strip(), plate=row[2].replace(" ", ""), owner_phone=row[3].strip())
         local_session.add(car)
         local_session.commit()
     local_session.close()
