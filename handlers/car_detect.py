@@ -60,12 +60,12 @@ def car_detect(update: Update, context: CallbackContext):
 
         plate_nums = get_plate_numbers(file_path)
         if not plate_nums[0]:
-            logger.info('Do not recognize')
+            logger.info('I can\'t recognize the plate number')
             return #ignore if does not recognize plate on image
         # local_session.execute('CREATE EXTENSION pg_trgm;')
         # SET pg_trgm.similarity_threshold = 0.7;
         for num in plate_nums[1]:
-            logger.info('FINDING CAR from db. Plate num: ' + num['plate'])
+            logger.info(f"FINDING CAR from db. Plate num: {num['plate']}")
             statement = select(Car).filter(func.similarity(Car.plate, num['plate'].upper()) > 0.4)
             car = local_session.execute(statement).scalars().first()
             if car:
