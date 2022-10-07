@@ -4,8 +4,8 @@ from db.models import Group, Calendar, Event, Session, engine
 from utils.translation import messages
 
 
-class ReserveValidator:
-    def __init__(self, start, end, description):
+class EventValidator:
+    def __init__(self, start=None, end=None, description=None):
         self.start = start
         self.end = end
         self.description = description
@@ -24,9 +24,14 @@ class ReserveValidator:
             return False, err_message
         return True, ''
 
-    def collision_validation(self):
-        statement = select(Event).filter(or_(and_(Event.start < self.start, Event.end > self.start), and_(
-        Event.start < self.end, Event.end > self.end)))
+    def collision_validation(self, edit=False, event_id=None):
+        if edit and event_id:
+            statement = select(Event).filter(or_(and_(Event.start < self.start, Event.end > self.start), and_(
+            Event.start < self.end, Event.end > self.end))).filter(Event.id!=event_id)
+        else:
+            statement = select(Event).filter(or_(and_(Event.start < self.start, Event.end > self.start), and_(
+            Event.start < self.end, Event.end > self.end)))
+
         events = self.session.execute(statement).scalars().all()
         if events:
             err_message = f"{messages['collision_err']['ru']} / {messages['collision_err']['uz']}: \n\n"
@@ -44,7 +49,8 @@ class ReserveValidator:
     def get_group(self):
         statement = select(Group)
         try:
-            self.group = self.session.execute(statement).scalars().one_or_none()
+            self.group = self.session.execute(
+                statement).scalars().one_or_none()
         except MultipleResultsFound:
             err_message = 'Ошибка! больше 1й группы в бд. обратитесь к админу'
             return False, err_message
@@ -57,7 +63,8 @@ class ReserveValidator:
 
         statement = select(Calendar).where(Calendar.group_id == self.group.id)
         try:
-            self.calendar = self.session.execute(statement).scalars().one_or_none()
+            self.calendar = self.session.execute(
+                statement).scalars().one_or_none()
         except MultipleResultsFound:
             err_message = 'Ошибка! больше 1го календаря в бд. обратитесь к админу'
             return False, err_message
@@ -67,7 +74,7 @@ class ReserveValidator:
         calendar = self.get_calendar()
         if not calendar[0]:
             return calendar
-        #try except
+        # try except
         self.event = Event(
             start=self.start,
             end=self.end,
@@ -80,4 +87,12 @@ class ReserveValidator:
         self.session.add(self.event)
         self.session.commit()
         return True, ''
-        
+
+    def update_event(self, event):
+        print(event)
+        self.session.query(Event).filter(Event.id == event.id).update(
+            {'description': self.description, 'start': self.start, 'end': self.end}, synchronize_session = False)
+        self.session.commit()
+        self.session.close()
+        return True, ''
+        #сохраняется только после перезапуска бота
