@@ -1,5 +1,4 @@
-from email import charset
-import os, requests, base64
+import os, requests, base64, logging
 from pathlib import Path
 from datetime import datetime
 from telegram import Update
@@ -18,10 +17,15 @@ if os.path.exists(dotenv_path):
 
 _TOKEN = os.environ['PLATE_RECOGNITION_TOKEN']
 
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
+)
+logger = logging.getLogger(__name__)
 
 local_session = Session(bind=engine)
 
 def get_plate_numbers(file_path):
+    logger.info('API is working')
     with open(file_path, "rb") as image:
             img_b64 = base64.b64encode(image.read())
             url = 'https://api.platerecognizer.com/v1/plate-reader/'
@@ -41,7 +45,7 @@ def get_plate_numbers(file_path):
 
 
 def car_detect(update: Update, context: CallbackContext):
-    
+    logger.info('Start detection')
     statement = select(Group)
     group = local_session.execute(statement).scalars().first()
     author = context.bot.get_chat_member(group.tg_id, update.effective_user.id)
@@ -49,19 +53,23 @@ def car_detect(update: Update, context: CallbackContext):
         context.bot.send_message(chat_id=update.effective_chat.id,
                                  text=f"{messages['auth_err']['ru']} / {messages['auth_err']['uz']}")
     else:
+        logger.info('Downloading file')
         file = context.bot.getFile(update.message.photo[1].file_id)
         file_path = f'media/images/{update.effective_user.id}-{datetime.now().strftime("%Y%m%d%H%M")}.jpg'
         file.download(file_path)
 
         plate_nums = get_plate_numbers(file_path)
         if not plate_nums[0]:
+            logger.info('Do not recognize')
             return #ignore if does not recognize plate on image
         # local_session.execute('CREATE EXTENSION pg_trgm;')
         # SET pg_trgm.similarity_threshold = 0.7;
         for num in plate_nums[1]:
+            logger.info('FINDING CAR from db. Plate num: ' + num['plate'])
             statement = select(Car).filter(func.similarity(Car.plate, num['plate'].upper()) > 0.4)
             car = local_session.execute(statement).scalars().first()
             if car:
+                logger.info('DONE')
                 update.message.reply_text(f"Это возможно наша машина:\nНомер машины: {car.plate}\nНомер владельца: {car.owner_phone}")
                 break
 
