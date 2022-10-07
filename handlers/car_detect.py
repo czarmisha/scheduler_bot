@@ -39,9 +39,6 @@ def get_plate_numbers(file_path):
             else:
                 return (False, response.text)
 
-def find_in_db(plate_num):
-    # local_session.query(Car).filter(Car.plate=plate_num).first()
-    pass
 
 def car_detect(update: Update, context: CallbackContext):
     
@@ -63,9 +60,7 @@ def car_detect(update: Update, context: CallbackContext):
         # SET pg_trgm.similarity_threshold = 0.7;
         for num in plate_nums[1]:
             statement = select(Car).filter(func.similarity(Car.plate, num['plate'].upper()) > 0.4)
-            # statement = select(Car).filter(Car.plate.op("%")(num['plate'].upper()))
             car = local_session.execute(statement).scalars().first()
-            print(car)
             if car:
                 update.message.reply_text(f"Это возможно наша машина:\nНомер машины: {car.plate}\nНомер владельца: {car.owner_phone}")
                 break
