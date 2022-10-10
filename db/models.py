@@ -72,9 +72,13 @@ class Car(Base):
 
     id = Column(SmallInteger, primary_key=True)
     model = Column(String(70), nullable=False)
-    plate = Column(String(20), nullable=False)
-    owner_phone = Column(String(20), nullable=False)
-    owner_name = Column(String(70), nullable=True)
+    plate = Column(String(50), nullable=False)
+    owner_phone = Column(String(50), nullable=False)
+    owner_name = Column(String(70), nullable=False)
+    owner_email = Column(String(100), nullable=False)
+    owner_department = Column(String(100), nullable=True)
+    owner_cabinet = Column(String(50), nullable=False)
+    owner_username = Column(String(70), nullable=True)
 
     def __repr__(self):
         return f'<Car: plate - {self.plate}>'

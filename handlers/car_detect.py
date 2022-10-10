@@ -1,7 +1,7 @@
 import os, requests, base64, logging
 from pathlib import Path
 from datetime import datetime
-from telegram import Update
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, utils
 from telegram.ext import CallbackContext, MessageHandler, Filters
 
 from sqlalchemy import select, func
@@ -61,6 +61,7 @@ def car_detect(update: Update, context: CallbackContext):
         plate_nums = get_plate_numbers(file_path)
         if not plate_nums[0]:
             logger.info('Do not recognize')
+            os.remove(file_path)
             return #ignore if does not recognize plate on image
         # local_session.execute('CREATE EXTENSION pg_trgm;')
         # SET pg_trgm.similarity_threshold = 0.7;
@@ -69,10 +70,26 @@ def car_detect(update: Update, context: CallbackContext):
             statement = select(Car).filter(func.similarity(Car.plate, num['plate'].upper()) > 0.4)
             car = local_session.execute(statement).scalars().first()
             if car:
-                logger.info('DONE')
-                update.message.reply_text(f"Это возможно наша машина:\nНомер машины: {car.plate}\nНомер владельца: {car.owner_phone}")
+                logger.info('SUCCESS DETECTION')
+                txt = 'Это возможно наша машина:\n'
+                txt +=  f'Номер машины: {car.plate}\n' if car.plate else ''
+                txt +=  f'Имя: {car.owner_name}' if car.owner_name else ''
+                txt +=  f' - {car.owner_username}\n' if car.owner_username else ''
+                txt +=  f'Номер владельца: {car.owner_phone}\n' if car.owner_phone else ''
+                txt +=  f'Отдел: {car.owner_department}\n' if car.owner_department else ''
+                txt +=  f'Кабинет: {car.owner_cabinet}\n' if car.owner_cabinet else ''
+
+                # if car.owner_username:
+                #     chat_url = utils.helpers.create_deep_linked_url(car.owner_username, 'send message')
+                #     keyboard = [[(InlineKeyboardButton(text="Написать", url=chat_url)),],]
+                
+                # reply_markup = InlineKeyboardMarkup(keyboard)
+                update.message.reply_text(txt)
+                if not car.owner_username:
+                    context.bot.send_contact(update.effective_chat.id, car.owner_phone, car.owner_name)
+                
                 break
 
-    os.remove(file_path)
+        os.remove(file_path)
 
 detect_handler = MessageHandler(Filters.photo, car_detect)
