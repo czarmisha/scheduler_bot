@@ -1,7 +1,7 @@
 import os, requests, base64, logging
 from pathlib import Path
 from datetime import datetime
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, utils
+from telegram import Update
 from telegram.ext import CallbackContext, MessageHandler, Filters
 
 from sqlalchemy import select, func
@@ -63,8 +63,6 @@ def car_detect(update: Update, context: CallbackContext):
             logger.info('Do not recognize')
             os.remove(file_path)
             return #ignore if does not recognize plate on image
-        # local_session.execute('CREATE EXTENSION pg_trgm;')
-        # SET pg_trgm.similarity_threshold = 0.7;
         for num in plate_nums[1]:
             logger.info('FINDING CAR from db. Plate num: ' + num['plate'])
             statement = select(Car).filter(func.similarity(Car.plate, num['plate'].upper()) > 0.4)
@@ -79,11 +77,6 @@ def car_detect(update: Update, context: CallbackContext):
                 txt +=  f'Отдел: {car.owner_department}\n' if car.owner_department else ''
                 txt +=  f'Кабинет: {car.owner_cabinet}\n' if car.owner_cabinet else ''
 
-                # if car.owner_username:
-                #     chat_url = utils.helpers.create_deep_linked_url(car.owner_username, 'send message')
-                #     keyboard = [[(InlineKeyboardButton(text="Написать", url=chat_url)),],]
-                
-                # reply_markup = InlineKeyboardMarkup(keyboard)
                 update.message.reply_text(txt)
                 if not car.owner_username:
                     context.bot.send_contact(update.effective_chat.id, car.owner_phone, car.owner_name)
