@@ -1,5 +1,7 @@
 FROM python:3.8-bullseye
 
+ENV PYTHONDONTWRITEBYTECODE=True
+
 COPY ./requirements.txt /app/requirements.txt
 
 WORKDIR /app
@@ -9,6 +11,6 @@ RUN pip install -r requirements.txt
 COPY ./cron_job /etc/cron.daily/
 RUN chmod +x /etc/cron.daily/cron_job
 
-ENV PYTHONDONTWRITEBYTECODE=True
+COPY . /app
 
 CMD ["python", "main.py"]
