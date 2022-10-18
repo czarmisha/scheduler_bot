@@ -54,11 +54,11 @@ def initiate_group(update: Update, context: CallbackContext):
                 calendar.group_id = new_group.id
                 local_session.add(calendar)
                 local_session.commit()
-                logger.info('Bot is ready')
             else:
                 context.bot.send_message(chat_id=update.effective_chat.id,
                              text=f'Возникла ошибка. Обратитесь к админу')
             local_session.delete(group)
             local_session.commit()
+    logger.info('Bot is ready')
 
 initiate_handler = ChatMemberHandler(initiate_group)
