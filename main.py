@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 
 from telegram.ext import Updater
 
-from handlers import start, reserve, initiate, display, my_events, feedback, help
+from handlers import start, reserve, initiate, display, my_events, feedback, help, repair
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 if os.path.exists(dotenv_path):
@@ -16,6 +16,7 @@ if __name__ == '__main__':
     dispatcher = updater.dispatcher
 
     dispatcher.add_handler(start.start_handler)
+    dispatcher.add_handler(repair.repair_handler)
     dispatcher.add_handler(reserve.reserve_handler)
     dispatcher.add_handler(initiate.initiate_handler)
     dispatcher.add_handler(display.display_handler)
