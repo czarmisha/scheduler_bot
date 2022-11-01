@@ -1,3 +1,4 @@
+import logging
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import CallbackContext, CommandHandler
 
@@ -6,6 +7,10 @@ from db.models import Group, Session, engine
 from utils.translation import messages
 
 local_session = Session(bind=engine)
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
+)
+logger = logging.getLogger(__name__)
 
 def start(update: Update, context: CallbackContext):
     if not update.message.chat.type == 'private':
@@ -14,7 +19,7 @@ def start(update: Update, context: CallbackContext):
     else:
         statement = select(Group)
         group = local_session.execute(statement).scalars().first()
-        print(group.tg_id)
+        logger.info('!!!!!!!!!!!!!', group.tg_id)
         author = context.bot.get_chat_member(group.tg_id, update.effective_user.id)
         if author.status == 'left' or author.status == 'kicked' or not author.status:
             context.bot.send_message(chat_id=update.effective_chat.id,
