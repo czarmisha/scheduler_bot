@@ -14,6 +14,7 @@ def start(update: Update, context: CallbackContext):
     else:
         statement = select(Group)
         group = local_session.execute(statement).scalars().first()
+        print(group.td_id)
         author = context.bot.get_chat_member(group.tg_id, update.effective_user.id)
         if author.status == 'left' or author.status == 'kicked' or not author.status:
             context.bot.send_message(chat_id=update.effective_chat.id,
